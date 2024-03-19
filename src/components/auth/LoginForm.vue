@@ -1,116 +1,141 @@
 <template>
-    <div class="login-container">
-      <nav class="navbar">
-        <img src="/assets/Harmonix.png" alt="Website Logo" class="logo">
-      </nav>
-      <div class="login-form">
+  <div>
+    <div class="title">
+      <h1><b>Welcome to Harmonix</b></h1>
+    </div>
+    <div class="container">
+      <div class="login-box">
         <h2>Login</h2>
-        <form @submit.prevent="login">
-          <div class="form-group">
-            <label for="role">Role</label>
-            <select v-model="role" id="role">
-              <option value="user">User</option>
-              <option value="creator">Creator</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" v-model="name" id="name" placeholder="Enter your name" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" v-model="password" id="password" placeholder="Enter your password" required>
-          </div>
-          <p>New to website? <router-link to="/signup">Sign up here</router-link></p>
+        <template v-if="error">
+          <p style="color: red;">{{ error }}</p>
+        </template>
+
+        <form @submit.prevent="handleLogin">
+          <select v-model="selectedRole">
+            <option value="user">User</option>
+            <option value="creator">Creator</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <input type="text" v-model="username" placeholder="Username">
+          <input type="password" v-model="password" placeholder="Password">
           <button type="submit">Login</button>
         </form>
+        <div class="signup">
+          <p>New to Harmonix? <a href="#">Sign up</a></p>
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        role: 'user',
-        name: '',
-        password: ''
-      };
-    },
-    methods: {
-      login() {
-        // Your login logic here
-        console.log('Login credentials:', this.role, this.name, this.password);
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      selectedRole: 'user',
+      username: '',
+      password: '',
+      error: ''
+    };
+  },
+  methods: {
+    handleLogin() {
+      if (this.selectedRole === 'user') {
+        this.validateUserLogin();
+      } else if (this.selectedRole === 'creator') {
+        // Handle creator login
+        // Example: this.validateCreatorLogin();
+      } else if (this.selectedRole === 'admin') {
+        // Handle admin login
+        // Example: this.validateAdminLogin();
       }
-    }
-  };
-  </script>
-  
-  <style scoped>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background-color: #333;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        flex-direction: column;
-    }
+    },
+    validateUserLogin() {
+      if (this.username === 'user' && this.password === 'password') {
+        this.$router.push('/user');
+      } else {
+        this.error = 'Invalid user credentials. Please try again.';
+      }
+    },
+    // Additional methods for handling creator and admin logins can be added here
+  }
+};
+</script>
 
-    .title {
-        font-size: 24px;
-        margin-bottom: 30px;
-        color: rgb(240, 255, 255);
-    }
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #333;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
 
-    .container {
-        display: flex;
-        width: 800px;
-    }
+.title {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: rgb(255, 255, 255)
+}
 
-    .left-box,
-    .right-box {
-        flex: 1;
-        background-color: rgba(255, 255, 255, 0.5);
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        padding: 40px;
-        margin: 0 10px;
-    }
+.container {
+  display: flex;
+  width: 500px;
+}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #E35F21; /* Match button color */
-    }
+.login-box {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  margin: 0 10px;
+}
 
-    input,
-    button {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        margin-bottom: 20px;
-        box-sizing: border-box;
-    }
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: rgb(0, 0, 0);
+}
 
-    button {
-        background-color: #E35F21;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s; /* Add smooth transition */
-    }
+select,
+input,
+button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
 
-    button:hover {
-        background-color: #9c4117; /* Darken button color on hover */
-    }
+button {
+  background-color: #E35F21;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-  </style>
+button:hover {
+  background-color: #9c4117;
+}
 
-  ./loginForm.vue./LoginForm.vue
+a {
+  color: #E35F21;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.signup {
+  text-align: center;
+}
+</style>
