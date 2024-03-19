@@ -17,12 +17,12 @@
             <option value="admin">Admin</option>
           </select>
 
-          <input type="text" v-model="username" placeholder="Username">
+          <input type="text" v-model="username" placeholder="Name">
           <input type="password" v-model="password" placeholder="Password">
           <button type="submit">Login</button>
         </form>
         <div class="signup">
-          <p>New to Harmonix? <a href="#">Sign up</a></p>
+          <p>New to Harmonix? <router-link to="/signup">Sign Up</router-link></p>
         </div>
       </div>
     </div>
