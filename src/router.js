@@ -2,9 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'; // Import createRou
 
 import LoginForm from './components/auth/LoginForm.vue';
 import SignupForm from './components/auth/SignupForm.vue';
+import HomePage from './views/HomePage.vue'; // Import the corrected HomePage component
 
 const routes = [
-  { path: '/', redirect: '/login' },
+  { path: '/', component: HomePage }, // Set the HomePage as the landing page
   { path: '/login', component: LoginForm },
   { path: '/signup', component: SignupForm }
 ];
