@@ -1,206 +1,118 @@
 <template>
-  <div>
-    <header>
-      <nav>
-        <div class="logo">
-          <img src="../assets/harmonix.png" alt="Harmonix Logo">
-        </div>
-        <div class="header-controls">
-          <div class="search-bar">
-            <input type="text" placeholder="Search">
-          </div>
-          <div class="login-buttons">
-            <router-link to="/login" class="button-link">Login</router-link>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <main>
-      <div class="slider">
-        <img :src="currentSlide" alt="Slider Image" class="responsive" v-for="(slide, index) in slides" :key="index">
+  <div class="home-page">
+    <div class="header">
+      <img src="@/assets/harmonix.png" alt="Harmonix Logo" class="logo">
+    </div>
+    <div class="content">
+      <div class="left-section">
+        <h1 class="heading">Harmonix</h1>
+        <p class="description">
+          Welcome to Harmonix, where music comes alive. Play, pause, and immerse yourself in the world of melodies. Explore lyrics, rate songs, and create playlists. For creators, it's not just about listening, but also about sharing. Upload songs, albums, and lyrics. It's your stage, your music.
+        </p>
+        <p class="join-message"><i>
+          Join Harmonix and let the music flow.</i>
+        </p>
+        <button class="login-button" @click="goToLogin">Login</button>
       </div>
-
-      <div class="song-list">
-        <div class="song" v-for="(song, index) in songList" :key="index">
-          <img :src="'../assets/' + song.image" :alt="song.name">
-          <p>{{ song.name }}</p>
-        </div>
+      <div class="right-section">
+        <img src="@/assets/panda.png" alt="Panda Image" class="panda-image">
       </div>
-    </main>
-
-    <footer>
+    </div>
+    <footer class="footer">
       <p>&copy; Harmonix. All rights reserved.</p>
-      <br>
-      <p>Contact: contact@harmonix.com</p>
     </footer>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      slides: [
-        { image: 'slider1.jpg' },
-        { image: 'slider2.jpg' },
-        { image: 'slider3.jpg' },
-        { image: 'slider4.jpg' },
-        { image: 'slider5.jpg' }
-      ],
-      songList: [
-        { name: 'Alone', image: 'alone.jpg' },
-        { name: 'Close To Me', image: 'closetome.png' },
-        { name: 'Devil Eyes', image: 'devileyes.png' },
-        { name: 'Hope', image: 'hope.png' },
-        { name: 'Intentions', image: 'Intentions.jpg' },
-        { name: 'Mine', image: 'mine.jpg' },
-        { name: 'Moved On', image: 'movedon.jpg' },
-        { name: 'Natural', image: 'Natural.png' }
-      ]
-    };
-  },
-  computed: {
-    currentSlide() {
-      return `../assets/${this.slides[0].image}`;
+  methods: {
+    goToLogin() {
+      this.$router.push('/login');
     }
   }
-};
+}
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
+.home-page {
+  background-color: black;
+  color: white;
   font-family: Arial, sans-serif;
-}
-
-header {
-  background-color: #333;
-  color: #fff;
-  padding: 20px;
-}
-
-nav {
+  min-height: 100vh; /* Use min-height instead of height */
+  padding: 20px; /* Add padding */
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
-.logo img {
-  height: 50px;
-}
-
-.header-controls {
+.header {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  margin-bottom: 100px; /* Decrease margin */
+  margin-top: 20px; /* Decrease margin */
 }
 
-.search-bar input[type="text"] {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-right: 5px;
-  transition: border-color 0.3s ease-in-out;
+.logo {
+  width: 250px; /* Increase the logo size */
 }
 
-.search-bar input[type="text"]:focus {
-  outline: none;
-  border-color: #555;
-}
-
-.search-bar .search-btn,
-.login-buttons a {
-  padding: 8px 15px;
-  background-color: #333;
-  color: #fff;
+.login-button {
+  background-color: #E35F21;
+  color: white;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 10px;
-  transition: background-color 0.3s ease-in-out;
-  text-decoration: none;
+  margin-top: 20px; /* Add margin between paragraph and button */
+  width: 100px;
 }
 
-.login-buttons a:hover {
-  background-color: #555;
+.content {
+  display: flex;
+  justify-content: center; /* Center align content */
+  align-items: center;
+  margin-left: 50px;
 }
 
-.slider {
-  width: 100%;
-  height: 500px;
-  overflow: hidden;
-  position: relative;
-  margin-top: 0px;
+.left-section {
+  flex: 1;
+  padding-right: 20px;
+  text-align: justify; /* Justify align text */
 }
 
-.slider img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  transition: opacity 0.5s ease-in-out;
+.heading {
+  font-size: 60px;
+  margin-bottom: 20px;
 }
 
-.slider img:not(:first-child) {
-  opacity: 0;
+.description {
+  font-size: 22px;
+  line-height: 1.5;
 }
 
-.song-list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 20px;
+.join-message {
+  font-size: 22px;
   margin-top: 20px;
 }
 
-.song {
-  text-align: center;
-  transition: transform 0.3s ease-in-out;
-  margin: 0 10px;
+.right-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
-.song img {
+.panda-image {
+  max-width: 60%;
+  height: auto;
+}
+
+.footer {
+  background-color: #000000; /* Dummy footer background color */
+  color: white;
+  text-align: center;
+  padding: 20px 0; /* Add padding */
+  position: fixed; /* Fixed position for footer */
+  bottom: 0;
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 5px;
-  transition: transform 0.3s ease-in-out;
-}
-
-.song img:hover {
-  transform: scale(0.9);
-}
-
-.song p {
-  margin: 0;
-  font-size: 18px;
-  color: #333;
-}
-
-footer {
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-  margin-top: 10px;
-}
-
-.button-link {
-  text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: 1px solid #333;
-  margin: 10px;
-  display: inline-block;
-  transition: background-color 0.3s, color 0.3s;
-  color: #ffffff;
-}
-
-.button-link:hover {
-  background-color: #201f1f;
-  color: #fff;
 }
 </style>
