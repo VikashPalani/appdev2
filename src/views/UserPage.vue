@@ -1,23 +1,8 @@
 <template>
 
-  <!-- Header Container -->
-  <header>
-    <form @submit.prevent="search">
-      <input type="text" v-model="searchQuery" placeholder="Search...">
-      <button type="submit">Search</button>
-    </form>
-    <img src="@/assets/harmonix.png" alt="Harmonix Logo">
-    <div class="header-buttons">
-      <button @click="playlist">My Playlists</button>
-      <button @click="signOut">Log Out</button>
-    </div>
-  </header>
-
   <div>
-  
-    <div class="user-info">
-      <p><strong>Welcome User!</strong></p>
-    </div>
+
+    <UserHeader/>
 
     <div class="section">
       <hr><hr>
@@ -100,7 +85,13 @@
 </template>
 
 <script>
+
+import UserHeader from '@/components/common/UserHeader.vue';
 export default {
+  components: {
+    UserHeader
+  },
+
   data() {
     return {
       searchQuery: '',
@@ -136,6 +127,7 @@ export default {
       console.error('Error fetching songs:', error);
     });
     },
+
     search() {
       // Perform search based on the search query
       this.query = this.searchQuery;
@@ -149,12 +141,15 @@ export default {
           console.error('Error searching songs:', error);
         });
     },
+
     signOut() {
       // Implement sign-out functionality
     },
+
     goToPlaylists() {
       // Redirect to user's playlists page
     },
+
     rateSong(songId, rating) {
       // Rate the song
       // Make API call to rate the song
@@ -185,51 +180,6 @@ export default {
 
 
 <style>
-
-/* Header Styles */
-.header {
-  
-  color: #fff;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo img {
-  height: 50px;
-}
-
-.header-buttons button {
-  margin-left: 10px;
-}
-
-/* Search Bar Styles */
-.search-bar {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.search-bar input {
-  padding: 5px;
-  margin-right: 5px;
-}
-
-/* User Info Styles */
-.user-info {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-  text-align: left;
-  margin-bottom: 20px;
-  margin-top: 150px;
-}
-
-.user-info p {
-  margin: 0;
-  font-size: 26px;
-}
 
 /* Section Styles */
 .section {
