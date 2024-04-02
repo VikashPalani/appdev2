@@ -1,27 +1,33 @@
 <template>
-  <div>
-    <header>
-      <form @submit.prevent="search" class="search-bar">
-        <input v-model="searchQuery" type="text" placeholder="Search...">
-        <button type="submit">Search</button>
-      </form>
-      <img src="/static/Harmonix.png" alt="Harmionix Logo">
-      <div class="header-buttons">
-        <button @click="openCreatorLogin">Creator Login</button>
-        <button @click="goToPlaylists">My Playlists</button>
-        <button @click="signOut">Log Out</button>
-      </div>
-    </header>
 
+  <!-- Header Container -->
+  <header>
+    <form @submit.prevent="search">
+      <input type="text" v-model="searchQuery" placeholder="Search...">
+      <button type="submit">Search</button>
+    </form>
+    <img src="@/assets/harmonix.png" alt="Harmonix Logo">
+    <div class="header-buttons">
+      <button @click="playlist">My Playlists</button>
+      <button @click="signOut">Log Out</button>
+    </div>
+  </header>
+
+  <div>
+  
     <div class="user-info">
       <p><strong>Welcome User!</strong></p>
     </div>
 
     <div class="section">
+      <hr><hr>
       <h2>SONGS</h2>
+      <hr><hr>
       <div class="list">
         <p v-if="query">Search results for "{{ query }}":</p>
         <div v-for="song in songs" :key="song.song_id" class="item">
+
+          <!-- Song Details -->
           <img :src="`/${song.image_path}`" :alt="song.song_name" class="song-image">
           <div class="lyrics-container">
             <p>{{ song.lyrics }}</p>
@@ -49,24 +55,47 @@
       </div>
     </div>
 
-    <hr>
+    <hr><hr>
 
+    <!-- Creators Section -->
     <div class="creators-section">
       <h2>CREATORS</h2>
       <div class="creators-list">
-        <div v-for="(creator, index) in creators" :key="index" class="creator-item">
-          <img :src="`/static/${creator.image}`" :alt="creator.name">
+        <!-- Creator Images -->
+        <div class="creator-item">
+          <img src="@/assets/alanwalker.jpg" alt="alanwalker">
+        </div>
+        <div class="creator-item">
+          <img src="@/assets/elliegoulding.png" alt="ellie goulding">
+        </div>
+        <div class="creator-item">
+          <img src="@/assets/imaginedragons.jpg" alt="imagine dragons">
+        </div>
+        <div class="creator-item">
+          <img src="@/assets/justinbieber.jpg" alt="justin bieber">
+        </div>
+        <div class="creator-item">
+          <img src="@/assets/hippiesabotage.jpg" alt="hippie sabotage">
+        </div>
+        <div class="creator-item">
+          <img src="@/assets/otnicka.jpg" alt="otnicka">
         </div>
       </div>
       <div class="creators-names">
+        <!-- Creator Names -->
         <div v-for="(creator, index) in creators" :key="index" class="creator-name">{{ creator.name }}</div>
       </div>
     </div>
 
+    <hr><hr>
+
+
+    <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
     </footer>
+    <hr><hr>
   </div>
 </template>
 
@@ -78,12 +107,12 @@ export default {
       query: '',
       songs: [],
       creators: [
-        { name: 'Alan Walker', image: './src/assets/alanwalker.jpg' },
-        { name: 'Ellie Goulding', image: 'elliegoulding.png' },
-        { name: 'Imagine Dragons', image: 'imaginedragons.jpg' },
-        { name: 'Justin Bieber', image: 'justinbieber.jpg' },
-        { name: 'Hippie Sabotage', image: 'hippiesabotage.jpg' },
-        { name: 'Otnicka', image: 'otnicka.jpg' }
+        { name: 'Alan Walker', image: '@/assets/alanwalker.jpg' },
+        { name: 'Ellie Goulding', image: '@/assets/elliegoulding.png' },
+        { name: 'Imagine Dragons', image: '@/assets/imaginedragons.jpg' },
+        { name: 'Justin Bieber', image: '@/assets/justinbieber.jpg' },
+        { name: 'Hippie Sabotage', image: '@/assets/hippiesabotage.jpg' },
+        { name: 'Otnicka', image: '@/assets/otnicka.jpg' }
       ]
     };
   },
@@ -93,15 +122,19 @@ export default {
   },
   methods: {
     fetchSongs() {
-      // Make API call to fetch songs data from backend
-      fetch('/api/songs')
-        .then(response => response.json())
-        .then(data => {
-          this.songs = data;
-        })
-        .catch(error => {
-          console.error('Error fetching songs:', error);
-        });
+  // Make API call to fetch songs data from backend
+  fetch('/api/songs')
+    .then(response => response.json())
+    .then(data => {
+      this.songs = data;
+      // Print the value of song.image_path for each song
+      this.songs.forEach(song => {
+        console.log(song.image_path);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching songs:', error);
+    });
     },
     search() {
       // Perform search based on the search query
@@ -118,9 +151,6 @@ export default {
     },
     signOut() {
       // Implement sign-out functionality
-    },
-    openCreatorLogin() {
-      // Redirect to creator login page
     },
     goToPlaylists() {
       // Redirect to user's playlists page
@@ -153,10 +183,12 @@ export default {
 };
 </script>
 
-<style scoped>
+
+<style>
+
 /* Header Styles */
-header {
-  background-color: #333;
+.header {
+  
   color: #fff;
   padding: 10px;
   display: flex;
@@ -164,51 +196,34 @@ header {
   align-items: center;
 }
 
-header img {
+.logo img {
   height: 50px;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  max-width: 400px;
-}
-
-.search-bar input[type="text"] {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 4px;
-  margin-right: 8px;
-}
-
-.search-bar button {
-  padding: 8px 12px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
-}
-
-.search-bar button:hover {
-  background-color: #555;
-  transform: scale(1.05);
 }
 
 .header-buttons button {
   margin-left: 10px;
 }
 
+/* Search Bar Styles */
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.search-bar input {
+  padding: 5px;
+  margin-right: 5px;
+}
+
 /* User Info Styles */
 .user-info {
-  background-color: #444444;
+  background-color: #333;
   color: #fff;
   padding: 10px;
   text-align: left;
   margin-bottom: 20px;
-  margin-top: 15px;
+  margin-top: 150px;
 }
 
 .user-info p {
@@ -218,13 +233,14 @@ header img {
 
 /* Section Styles */
 .section {
-  margin: 20px;
+  margin: 10px;
 }
 
 .section h2 {
-  color: #333;
-  font-size: 20px;
+  color: #fff;
+  font-size: 24px;
   text-align: center;
+  padding: 5px;
 }
 
 /* List Styles */
@@ -333,9 +349,18 @@ header img {
 }
 
 /* Creators Section Styles */
+
+.creators-section h2 {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
 .creators-section {
   margin: 20px;
   text-align: center;
+  color: #fff
+  
 }
 
 .creators-list {

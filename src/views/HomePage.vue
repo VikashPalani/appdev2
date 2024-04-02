@@ -28,7 +28,7 @@
 export default {
   methods: {
     goToLogin() {
-      this.$router.push('/sample');
+      this.$router.push('/user');
     }
   }
 }
