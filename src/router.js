@@ -5,6 +5,7 @@ import SignupForm from './components/auth/SignupForm.vue';
 import HomePage from './views/HomePage.vue';
 import UserPage from './views/UserPage.vue';
 import SamplePage from './views/SamplePage.vue';
+import CreatorPage from './views/CreatorPage.vue';
 
 
 
@@ -13,7 +14,8 @@ const routes = [
   { path: '/login', component: LoginForm },
   { path: '/signup', component: SignupForm },
   { path: '/user', component: UserPage },
-  { path: '/sample', component: SamplePage }
+  { path: '/sample', component: SamplePage },
+  { path: '/creator', component: CreatorPage }
 ];
 
 const router = createRouter({

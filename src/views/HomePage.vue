@@ -28,13 +28,13 @@
 export default {
   methods: {
     goToLogin() {
-      this.$router.push('/user');
+      this.$router.push('/creator');
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .home-page {
   background-color: black;
   color: white;
@@ -48,8 +48,8 @@ export default {
 .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 100px; /* Decrease margin */
-  margin-top: 20px; /* Decrease margin */
+  margin-bottom: 100px;
+  margin-top: 20px;
 }
 
 .logo {

@@ -18,6 +18,12 @@ class Song(db.Model):
     image_path = db.Column(db.String(200))
     avg_rating = db.Column(db.Float)
 
+class Creator(db.Model):
+    __tablename__ = 'creator'
+    creatorid = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    creatorname = db.Column(db.String)
+    password = db.Column(db.String)
+
 # API endpoint to fetch song data
 @app.route('/api/songs')
 def get_songs():
@@ -36,6 +42,20 @@ def get_songs():
             'avg_rating': song.avg_rating
         })
     return jsonify(song_data)
+
+
+@app.route('/api/creator')
+def get_creator():
+    creator = Creator.query.all()
+    creator_data = []
+    for create in creator:
+        creator_data.append({
+            'creatorid':creator.creatorid,
+            'creatorname':creator.creatorname,
+            'password':creator.password,
+        })
+    return jsonify(creator_data)
+
 
 # API endpoint to add a new song
 @app.route('/api/add_song', methods=['POST'])

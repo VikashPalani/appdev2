@@ -1,8 +1,6 @@
 <template>
-  <div>
-    <div class="title">
-      <h1><b>Welcome to Harmonix</b></h1>
-    </div>
+  <div class="wrapper">
+    <h1 class="title"><b>Welcome to Harmonix</b></h1>
     <div class="container">
       <div class="login-box">
         <h2>Login</h2>
@@ -63,45 +61,39 @@ export default {
 };
 </script>
 
-<style>
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #333;
-  background-size: cover;
-  background-position: center;
+<style scoped>
+
+
+/* Wrapper Background */
+.wrapper {
+  background-color: #333; /* Set wrapper background color to #333 */
+  height: 100vh; /* Ensure wrapper covers the full viewport height */
   display: flex;
+  flex-direction: column; /* Stack children vertically */
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  flex-direction: column;
 }
 
+/* Title Styling */
 .title {
-  font-size: 24px;
-  margin-bottom: 30px;
-  color: rgb(255, 255, 255)
+  font-size: 40px;
+  margin-bottom: 30px; /* Margin below the title */
+  color: #fff; /* Text color for the title */
 }
 
-.container {
-  display: flex;
-  width: 500px;
-}
 
 .login-box {
-  flex: 1;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: #ffffff8e; 
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px #00000033; /* Subtle shadow effect */
   padding: 40px;
-  margin: 0 10px;
+  width: 400px; /* Set width of the login box */
 }
 
 h2 {
   text-align: center;
   margin-bottom: 30px;
-  color: rgb(0, 0, 0);
+  color: #000; /* Set color for headings */
 }
 
 select,
@@ -115,27 +107,28 @@ button {
 }
 
 button {
-  background-color: #E35F21;
-  color: white;
+  background-color: #e35f21; /* Orange background color for buttons */
+  color: #fff; /* White text color for buttons */
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #9c4117;
+  background-color: #9c4117; /* Darker orange color on button hover */
 }
 
 a {
-  color: #E35F21;
+  color: #e35f21; /* Orange color for links */
   text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
+  text-decoration: underline; /* Underline links on hover */
 }
 
 .signup {
+  font-size: 20px;
   text-align: center;
 }
 </style>

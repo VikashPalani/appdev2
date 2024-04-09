@@ -2,7 +2,21 @@
 
   <div>
 
-    <UserHeader/>
+    <header class="header">
+      <div class="search-bar">
+        <form @submit.prevent="search">
+          <input type="text" v-model="searchQuery" placeholder="Search..." class="search-input">
+          <button type="submit" class="search-button">Search</button>
+        </form>
+      </div>
+      <div class="logo">
+        <img src="@/assets/harmonix.png" alt="Website Logo" class="logo-img">
+      </div>
+      <div class="header-buttons">
+        <button @click="playlist" class="header-button">My Playlists</button>
+        <button @click="signOut" class="header-button">Log Out</button>
+      </div>
+    </header>
 
     <div class="section">
       <hr><hr>
@@ -13,7 +27,15 @@
         <div v-for="song in songs" :key="song.song_id" class="item">
 
           <!-- Song Details -->
-          <img :src="`/${song.image_path}`" :alt="song.song_name" class="song-image">
+          <!-- <img :src="`/${song.image_path}`" :alt="song.song_name" class="song-image"> -->
+          <!-- <img src="@/assets/alanwalker.jpg" alt="alanwalker"> -->
+
+          <!-- <img :src="getImgUrl(image.src)"/> -->
+          <!-- <img src="D:\Projects\harmonixVue\appdev2\src\assets\" + song.image_path >   -->
+          <!-- <img src="@('/assets' + {{ song.image_path }})"> -->
+          <img src="{{ song.image_path }}">
+
+
           <div class="lyrics-container">
             <p>{{ song.lyrics }}</p>
           </div>
@@ -72,26 +94,18 @@
       </div>
     </div>
 
-    <hr><hr>
-
-
     <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
     </footer>
-    <hr><hr>
   </div>
 </template>
 
 <script>
 
-import UserHeader from '@/components/common/UserHeader.vue';
 export default {
-  components: {
-    UserHeader
-  },
-
+    
   data() {
     return {
       searchQuery: '',
@@ -107,11 +121,17 @@ export default {
       ]
     };
   },
+
   mounted() {
     // Fetch songs data when the component is mounted
     this.fetchSongs();
   },
   methods: {
+
+    // getImgUrl: function (path) { 
+      // return require('@/assets/' + `{{ song.image_path }}`);
+    // },
+
     fetchSongs() {
   // Make API call to fetch songs data from backend
   fetch('/api/songs')
@@ -179,15 +199,64 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 
-/* Section Styles */
+.header {
+  background-color: #333;
+  color: #333;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 100px;
+}
+
+.logo img {
+  width: 200px;
+}
+
+.header-buttons button {
+  margin-left: 10px;
+  width: 120px;
+}
+
+.search-bar input {
+  padding: 5px;
+  margin-right: 5px;
+  height: 20px;
+  width: 150px;
+  border: none;
+  border-radius: 4px;
+}
+
+button {
+  padding: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 120px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #555;
+  transform: scale(1.05);
+  height: 40px;
+}
+
+
 .section {
   margin: 10px;
 }
 
 .section h2 {
-  color: #fff;
+  color: #000;
   font-size: 24px;
   text-align: center;
   padding: 5px;
@@ -301,7 +370,7 @@ export default {
 /* Creators Section Styles */
 
 .creators-section h2 {
-  color: #fff;
+  color: #000;
   font-size: 24px;
   margin-bottom: 10px;
 }
@@ -309,7 +378,7 @@ export default {
 .creators-section {
   margin: 20px;
   text-align: center;
-  color: #fff
+  color: #000
   
 }
 
