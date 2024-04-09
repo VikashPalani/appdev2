@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-
+    
     <!-- Section - Your Uploads -->
     <section>
       <div class="uploads-header">
@@ -144,7 +144,7 @@ export default {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -300,7 +300,7 @@ th {
 hr {
   margin-top: 20px;
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid ;
 }
 
 footer {
