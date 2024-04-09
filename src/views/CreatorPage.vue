@@ -6,7 +6,7 @@
         <img src="@/assets/harmonix.png" alt="Website Logo">
       </div>
       <div class="header-buttons">
-        <button @click="redirectToHome">Home</button>
+        <button @click="redirectToAlbumPage">My Albums</button>
         <button @click="redirectToLogout">Logout</button>
       </div>
     </header>
@@ -89,9 +89,9 @@ export default {
     };
   },
   methods: {
-    redirectToHome() {
+    redirectToAlbumPage() {
       // Handle redirection to home page
-      this.$router.push('/');
+      this.$router.push('/album');
     },
     redirectToLogout() {
       // Handle logout logic
