@@ -28,7 +28,7 @@
 export default {
   methods: {
     goToLogin() {
-      this.$router.push('/playlist');
+      this.$router.push('/login');
     }
   }
 }

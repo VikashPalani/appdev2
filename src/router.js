@@ -13,7 +13,7 @@ import AlbumPage from './views/AlbumPage.vue';
 
 
 const routes = [
-  { path: '/', component: HomePage }, // Set the HomePage as the landing page
+  { path: '/', component: HomePage },
   { path: '/login', component: LoginForm },
   { path: '/signup', component: SignupForm },
   { path: '/user', component: UserPage },

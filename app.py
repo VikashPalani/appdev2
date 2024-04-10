@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///DB.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 # Define Song model
@@ -18,11 +18,22 @@ class Song(db.Model):
     image_path = db.Column(db.String(200))
     avg_rating = db.Column(db.Float)
 
+# Define Creator model
 class Creator(db.Model):
     __tablename__ = 'creator'
     creatorid = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     creatorname = db.Column(db.String)
     password = db.Column(db.String)
+
+# Define Playlist model
+class Playlist(db.Model):
+    __tablename__ = 'playlist'
+
+    playlistid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    userid = db.Column(db.Integer)
+    playlistname = db.Column(db.Text)
+    song_name = db.Column(db.Text, nullable=False)
+    creator_name = db.Column(db.Text, nullable=False)
 
 # API endpoint to fetch song data
 @app.route('/api/songs')
@@ -42,6 +53,23 @@ def get_songs():
             'avg_rating': song.avg_rating
         })
     return jsonify(song_data)
+
+
+@app.route('/api/playlists', methods=['GET'])
+def get_playlists():
+    playlists = Playlist.query.all()
+    playlist_list = []
+    for playlist in playlists:
+        playlist_data = {
+            'playlistid': playlist.playlistid,
+            'userid': playlist.userid,
+            'playlistname': playlist.playlistname,
+            'song_name': playlist.song_name,
+            'creator_name': playlist.creator_name
+        }
+        playlist_list.append(playlist_data)
+    
+    return jsonify(playlists=playlist_list)
 
 
 @app.route('/api/creator')

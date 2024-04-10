@@ -13,7 +13,7 @@
         <img src="@/assets/harmonix.png" alt="Website Logo" class="logo-img">
       </div>
       <div class="header-buttons">
-        <button @click="playlist" class="header-button">My Playlists</button>
+        <button @click="goToPlaylists" class="header-button">My Playlists</button>
         <button @click="signOut" class="header-button">Log Out</button>
       </div>
     </header>
@@ -22,19 +22,13 @@
       <hr><hr>
       <h2>SONGS</h2>
       <hr><hr>
+
       <div class="list">
         <p v-if="query">Search results for "{{ query }}":</p>
         <div v-for="song in songs" :key="song.song_id" class="item">
 
           <!-- Song Details -->
-          <!-- <img :src="`/${song.image_path}`" :alt="song.song_name" class="song-image"> -->
-          <!-- <img src="@/assets/alanwalker.jpg" alt="alanwalker"> -->
-
-          <!-- <img :src="getImgUrl(image.src)"/> -->
-          <!-- <img src="D:\Projects\harmonixVue\appdev2\src\assets\" + song.image_path >   -->
-          <!-- <img src="@('/assets' + {{ song.image_path }})"> -->
-          <img src="{{ song.image_path }}">
-
+          <img :src="require(`@/assets/${song.image_path}`)" alt="Song Image">
 
           <div class="lyrics-container">
             <p>{{ song.lyrics }}</p>
@@ -48,11 +42,15 @@
               <p><strong>Genre: {{ song.genre }}</strong></p>
               <p><strong>Average Rating: {{ song.avg_rating }}</strong></p>
             </div>
-            <audio controls>
-              <source :src="`/${song.song_path}`" type="audio/mpeg">
-            </audio>
-            <div class="rating">
-              <p>Rate this song:</p>
+            
+            <div class="control">
+              <audio controls>
+
+              <source :src="require(`@/assets/${song.song_path}`)" type="audio/mpeg">
+              <!-- <source :src="`/${song.song_path}`" type="audio/mpeg"> -->
+
+              </audio>
+              <p>Rate:</p>
               <span v-for="star in 5" :key="star" class="star" @click="rateSong(song.song_id, star)">
                 &#9733;
               </span>
@@ -128,10 +126,6 @@ export default {
   },
   methods: {
 
-    // getImgUrl: function (path) { 
-      // return require('@/assets/' + `{{ song.image_path }}`);
-    // },
-
     fetchSongs() {
   // Make API call to fetch songs data from backend
   fetch('/api/songs')
@@ -163,10 +157,12 @@ export default {
     },
 
     signOut() {
+      this.$router.push('/');
       // Implement sign-out functionality
     },
 
     goToPlaylists() {
+      this.$router.push('/playlist');
       // Redirect to user's playlists page
     },
 
@@ -297,7 +293,7 @@ button:hover {
   top: 0;
   left: 0;
   width: 100%;
-  height: 80%;
+  height: 75%;
   background-color: rgba(0, 0, 0, 0.9);
   color: #fff;
   display: none;
@@ -316,7 +312,7 @@ button:hover {
 
 .lyrics-container p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   max-height: 100%;
   overflow-y: auto;
   padding: 10px;
@@ -345,13 +341,14 @@ button:hover {
   color: #333;
 }
 
-.rating {
+.control {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
-.rating p {
+.control p {
+  margin-left: 30px;
   margin-right: 10px;
   font-weight: bold;
 }
