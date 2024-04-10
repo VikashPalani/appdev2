@@ -5,6 +5,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
+#MODELS
+
 # Define Song model
 class Song(db.Model):
     __tablename__ = 'songs'
@@ -34,6 +36,17 @@ class Playlist(db.Model):
     playlistname = db.Column(db.Text)
     song_name = db.Column(db.Text, nullable=False)
     creator_name = db.Column(db.Text, nullable=False)
+
+# Define Album model
+class Album(db.Model):
+    __tablename__ = 'album'
+
+    albumid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    creatorid = db.Column(db.Integer)
+    albumname = db.Column(db.Text)
+    song_name = db.Column(db.Text, nullable=False)
+    genre = db.Column(db.Text, nullable=False)
+
 
 # API endpoint to fetch song data
 @app.route('/api/songs')
