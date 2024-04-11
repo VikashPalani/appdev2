@@ -18,7 +18,7 @@
           <div class="user-section">
             <img class="user-photo" src="@/assets/creator2.jpg" alt="User Photo">
             <div class="user-details">
-              <p class="user-name">User {{ user_id }}</p>
+              <p class="user-name">Creator {{ user_id }}</p>
             </div>
           </div>
         </div>
@@ -68,6 +68,7 @@
           </div>
         </div>
       </div>
+
   
       <!-- Footer -->
       <footer>
@@ -261,13 +262,13 @@
   }
   
   button#home-button {
-    background-color: #E35F21;
+    background-color: #333;
     color: #fff;
     width: 150px;
   }
   
   button#home-button:hover {
-    background-color: #FF7F50;
+    background-color: #555;
   }
   
   button.add-button {
@@ -294,13 +295,13 @@
   }
   
   button.add-button[type="submit"] {
-    background-color: #E35F21;
+    background-color: #333;
     color: #fff;
     width: 80px;
   }
   
   button.add-button[type="submit"]:hover {
-    background-color: #FF7F50;
+    background-color: #555;
   }
   
   footer {

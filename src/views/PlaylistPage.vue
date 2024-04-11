@@ -11,6 +11,8 @@
       </div>
     </header>
 
+    <br>
+
     <!-- Main Content -->
     <div class="main-content">
       <!-- Left Section -->
@@ -31,14 +33,12 @@
               v-for="playlist in unique_playlists"
               :key="playlist"
               class="playlist-box"
-              @click="displaySongs(playlist)"
+              @click="displayedSongs(playlist)"
             >
               {{ playlist }}
             </button>
           </div>
         </div>
-
-        <div class="separator-line"></div>
 
         <div class="table-container">
           <div class="table-heading">Create New Playlist</div>
@@ -69,6 +69,8 @@
       </div>
     </div>
 
+    <br>
+
     <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
@@ -91,29 +93,87 @@
 export default {
   data() {
     return {
-      user_id: '123', // Example user ID
-      unique_playlists: ['Playlist 1', 'Playlist 2', 'Playlist 3'], // Example unique playlists
-      songs: [], // Populate with actual data or fetch from API
-      newPlaylistName: '',
+      searchQuery: '',
       isModalVisible: false,
-      modalSongs: []
+      selectedSong: null,
+      songs: [] // This will be populated with songs data from backend
     };
   },
-  methods: {
-    closeModal() {
-      this.isModalVisible = false;
-    },
-    addToPlaylist(songName, creatorName) {
-      // Placeholder for adding song to playlist logic
-      alert(`Add "${songName}" by ${creatorName} to the playlist: ${this.newPlaylistName}`);
-      // Implement API call or logic to add song to the selected playlist
-    },
-    redirectToHome() {
-      // Example redirection to home
-      this.$router.push('/user');
+
+
+  computed: {
+    displayedSongs() {
+      return this.songs.filter(song =>
+        song.song_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
     }
+  },
+  methods: {
+    async fetchSongs() {
+      try {
+        const response = await fetch('/api/songs');
+        if (!response.ok) {
+          throw new Error('Failed to fetch songs');
+        }
+        this.songs = await response.json();
+      } catch (error) {
+        console.error('Error fetching songs:', error);
+      }
+    },
+    // async showLyrics(song) {
+    //   try {
+    //     const response = await fetch(`/api/songs/${song.song_id}/lyrics`);
+    //     if (!response.ok) {
+    //       throw new Error('Failed to fetch lyrics');
+    //     }
+    //     const lyricsData = await response.json();
+
+    //     // Set the selected song with lyrics
+    //     this.selectedSong = {
+    //       ...song,
+    //       lyrics: lyricsData.lyrics // Assuming the response contains { lyrics: '...' }
+    //     };
+
+    //     // Display the modal
+    //     this.isModalVisible = true;
+    //   } catch (error) {
+    //     console.error('Error showing lyrics:', error);
+    //   }
+    // },
+    // closeModal() {
+    //   this.isModalVisible = false;
+    //   this.selectedSong = null;
+    // },
+    redirectToHome() {
+      // Redirect to admin dashboard (replace with your route)
+      this.$router.push('/user');
+    },
+    searchSongs() {
+      // Implement search logic here (e.g., filter songs in displayedSongs)
+      console.log('Searching songs with query:', this.searchQuery);
+    }
+  },
+  mounted() {
+    // Fetch songs when component is mounted
+    this.fetchSongs();
+  },
+
+
+  closeModal() {
+    this.isModalVisible = false;
+  },
+  addToPlaylist(songName, creatorName) {
+    // Placeholder for adding song to playlist logic
+    alert(`Add "${songName}" by ${creatorName} to the playlist: ${this.newPlaylistName}`);
+    // Implement API call or logic to add song to the selected playlist
+  },
+  redirectToHome() {
+    // Example redirection to home
+    this.$router.push('/user');
   }
 };
+
+
 </script>
 
 <style scoped>
@@ -215,11 +275,6 @@ export default {
   background-color: #ccc;
 }
 
-.separator-line {
-  margin-top: 20px;
-  border-top: 2px solid #ccc;
-}
-
 .table-container {
   margin-top: 20px;
 }
@@ -261,13 +316,13 @@ button {
 }
 
 button#home-button {
-  background-color: #E35F21;
+  background-color: #333;
   color: #fff;
   width: 150px;
 }
 
 button#home-button:hover {
-  background-color: #FF7F50;
+  background-color: #555;
 }
 
 button.add-button {
@@ -294,13 +349,13 @@ input {
 }
 
 button.add-button[type="submit"] {
-  background-color: #E35F21;
+  background-color: #333;
   color: #fff;
   width: 80px;
 }
 
 button.add-button[type="submit"]:hover {
-  background-color: #FF7F50;
+  background-color: #555;
 }
 
 footer {
