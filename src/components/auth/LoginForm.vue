@@ -9,13 +9,9 @@
         </template>
 
         <form @submit.prevent="handleLogin">
-          <select v-model="selectedRole">
-            <option value="user">User</option>
-            <option value="creator">Creator</option>
-            <option value="admin">Admin</option>
-          </select>
 
-          <input type="text" v-model="username" placeholder="Name">
+          <input type="text" v-model="role" placeholder="Role">
+          <input type="text" v-model="name" placeholder="Name">
           <input type="password" v-model="password" placeholder="Password">
           <button type="submit">Login</button>
         </form>

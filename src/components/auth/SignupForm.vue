@@ -9,13 +9,10 @@
         </template>
 
         <form @submit.prevent="handleSignup">
-          <select v-model="selectedRole">
-            <option value="user">User</option>
-            <option value="creator">Creator</option>
-          </select>
-          <input type="text" v-model="name" placeholder="Name">
-          <input type="email" v-model="email" placeholder="Email">
-          <input type="password" v-model="password" placeholder="Password">
+          <input type="text" v-model="role" placeholder="Role" required>
+          <input type="text" v-model="name" placeholder="Name" required>
+          <input type="email" v-model="email" placeholder="Email" required>
+          <input type="password" v-model="password" placeholder="Password" required>
           <button type="submit">Sign Up</button>
         </form>
         <div class="login-link">
@@ -30,21 +27,38 @@
 export default {
   data() {
     return {
+      role: '',
       name: '',
       email: '',
       password: '',
-      selectedRole: 'user',
       error: ''
     };
   },
   methods: {
-    handleSignup() {
-      // Here you can implement the logic to store user data
-      // For now, let's just display the entered data
-      console.log('Name:', this.name);
-      console.log('Email:', this.email);
-      console.log('Password:', this.password);
-      console.log('Role:', this.selectedRole);
+    async handleSignup() {
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            role: this.role,
+            name: this.name,
+            email: this.email,
+            password: this.password
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          this.$router.push('/login'); // Redirect to /user upon successful signup
+        } else {
+          this.error = data.message;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.error = 'Failed to sign up. Please try again.';
+      }
     }
   }
 };

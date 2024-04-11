@@ -10,25 +10,11 @@ db = SQLAlchemy(app)
 # Define User model
 class User(db.Model):
     __tablename__ = 'user'
-    userid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-
-# Define Creator model
-class Creator(db.Model):
-    __tablename__ = 'creator'
-    creatorid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creatorname = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-
-# Define Admin model
-class Admin(db.Model):
-    __tablename__ = 'admin'
-    adminid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    adminname = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
 
 # Define Song model
 class Song(db.Model):
@@ -42,13 +28,6 @@ class Song(db.Model):
     song_path = db.Column(db.String(200))
     image_path = db.Column(db.String(200))
     avg_rating = db.Column(db.Float)
-
-# # Define Creator model
-# class Creator(db.Model):
-#     __tablename__ = 'creator'
-#     creatorid = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-#     creatorname = db.Column(db.String)
-#     password = db.Column(db.String)
 
 # Define Playlist model
 class Playlist(db.Model):
@@ -69,6 +48,19 @@ class Album(db.Model):
     albumname = db.Column(db.Text)
     song_name = db.Column(db.Text, nullable=False)
     genre = db.Column(db.Text, nullable=False)
+
+@app.route('/api/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    new_user = User(
+        role=data.get('role'),
+        name=data.get('name'),
+        email=data.get('email'),
+        password=data.get('password')
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'User signed up successfully'}), 201
 
 
 # API endpoint to fetch song data
@@ -108,17 +100,17 @@ def get_playlists():
     return jsonify(playlists=playlist_list)
 
 
-@app.route('/api/creator')
-def get_creator():
-    creator = Creator.query.all()
-    creator_data = []
-    for create in creator:
-        creator_data.append({
-            'creatorid':creator.creatorid,
-            'creatorname':creator.creatorname,
-            'password':creator.password,
-        })
-    return jsonify(creator_data)
+# @app.route('/api/creator')
+# def get_creator():
+#     creator = Creator.query.all()
+#     creator_data = []
+#     for create in creator:
+#         creator_data.append({
+#             'creatorid':creator.creatorid,
+#             'creatorname':creator.creatorname,
+#             'password':creator.password,
+#         })
+#     return jsonify(creator_data)
 
 
 # API endpoint to add a new song
@@ -138,6 +130,7 @@ def add_song():
     db.session.add(new_song)
     db.session.commit()
     return jsonify({'message': 'Song added successfully'})
+
 
 @app.route('/api/flag_song/<int:song_id>', methods=['PUT'])
 def flag_song(song_id):
@@ -166,6 +159,7 @@ def get_song_lyrics(song_id):
     if not song:
         return jsonify({'message': 'Song not found'}), 404
     return jsonify({'lyrics': song.lyrics})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
