@@ -9,10 +9,8 @@
         </template>
 
         <form @submit.prevent="handleLogin">
-
-          <input type="text" v-model="role" placeholder="Role">
-          <input type="text" v-model="name" placeholder="Name">
-          <input type="password" v-model="password" placeholder="Password">
+          <input type="text" v-model="name" placeholder="Name" required>
+          <input type="password" v-model="password" placeholder="Password" required>
           <button type="submit">Login</button>
         </form>
         <div class="signup">
@@ -27,35 +25,47 @@
 export default {
   data() {
     return {
-      selectedRole: 'user',
-      username: '',
+      name: '',
       password: '',
       error: ''
     };
   },
   methods: {
-    handleLogin() {
-      if (this.selectedRole === 'user') {
-        this.validateUserLogin();
-      } else if (this.selectedRole === 'creator') {
-        // Handle creator login
-        // Example: this.validateCreatorLogin();
-      } else if (this.selectedRole === 'admin') {
-        // Handle admin login
-        // Example: this.validateAdminLogin();
+    async handleLogin() {
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: this.name,
+            password: this.password
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          // Login successful
+          if (data.role === 'user') {
+            this.$router.push('/user');
+          } else if (data.role === 'creator') {
+            this.$router.push('/creator');
+          } else {
+            this.error = 'Invalid user role.';
+          }
+        } else {
+          // Login failed
+          this.error = data.message || 'Login failed. Please try again.';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.error = 'Login failed. Please try again.';
       }
-    },
-    validateUserLogin() {
-      if (this.username === 'user' && this.password === 'password') {
-        this.$router.push('/user');
-      } else {
-        this.error = 'Invalid user credentials. Please try again.';
-      }
-    },
-    // Additional methods for handling creator and admin logins can be added here
+    }
   }
 };
 </script>
+
 
 <style scoped>
 

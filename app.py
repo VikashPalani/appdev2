@@ -63,6 +63,18 @@ def signup():
     return jsonify({'message': 'User signed up successfully'}), 201
 
 
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    name = data.get('name')
+    password = data.get('password')
+    user = User.query.filter_by(name=name, password=password).first()
+    if user:
+        return jsonify({'message': 'Login successful', 'role': user.role}), 200
+    else:
+        return jsonify({'message': 'Invalid credentials'}), 401
+
+
 # API endpoint to fetch song data
 @app.route('/api/songs')
 def get_songs():
