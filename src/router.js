@@ -9,6 +9,7 @@ import CreatorPage from './views/CreatorPage.vue';
 import SongPage from './views/SongPage.vue';
 import PlaylistPage from './views/PlaylistPage.vue';
 import AlbumPage from './views/AlbumPage.vue';
+import AdminPage from './views/AdminPage.vue';
 
 
 
@@ -21,7 +22,8 @@ const routes = [
   { path: '/creator', component: CreatorPage },
   { path: '/song', component: SongPage },
   { path: '/playlist', component: PlaylistPage },
-  { path: '/album', component: AlbumPage }
+  { path: '/album', component: AlbumPage },
+  { path: '/admin', component: AdminPage }
 ];
 
 const router = createRouter({

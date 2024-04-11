@@ -144,6 +144,10 @@
     height: 100%;
     margin-left: 10px;
   }
+
+  button{
+    font-size: 16px;
+  }
   
   .main-content {
     display: flex;

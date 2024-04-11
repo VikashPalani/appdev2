@@ -7,6 +7,29 @@ db = SQLAlchemy(app)
 
 #MODELS
 
+# Define User model
+class User(db.Model):
+    __tablename__ = 'user'
+    userid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+
+# Define Creator model
+class Creator(db.Model):
+    __tablename__ = 'creator'
+    creatorid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    creatorname = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+
+# Define Admin model
+class Admin(db.Model):
+    __tablename__ = 'admin'
+    adminid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    adminname = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
 # Define Song model
 class Song(db.Model):
     __tablename__ = 'songs'
@@ -20,12 +43,12 @@ class Song(db.Model):
     image_path = db.Column(db.String(200))
     avg_rating = db.Column(db.Float)
 
-# Define Creator model
-class Creator(db.Model):
-    __tablename__ = 'creator'
-    creatorid = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    creatorname = db.Column(db.String)
-    password = db.Column(db.String)
+# # Define Creator model
+# class Creator(db.Model):
+#     __tablename__ = 'creator'
+#     creatorid = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+#     creatorname = db.Column(db.String)
+#     password = db.Column(db.String)
 
 # Define Playlist model
 class Playlist(db.Model):
