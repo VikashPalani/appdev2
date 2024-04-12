@@ -177,6 +177,17 @@ def search():
 
         return jsonify(serialized_songs)
 
+# API endpoint to delete a song
+@app.route('/api/songs/<int:song_id>', methods=['DELETE'])
+def delete_song(song_id):
+    song = Song.query.get(song_id)
+    if not song:
+        return jsonify({'message': 'Song not found'}), 404
+
+    db.session.delete(song)
+    db.session.commit()
+    return jsonify({'message': f'Song {song_id} deleted successfully'})
+
 
 # # API endpoint to add a new song
 # @app.route('/api/add_song', methods=['POST'])
@@ -206,17 +217,6 @@ def search():
 #     song.flagged = True
 #     db.session.commit()
 #     return jsonify({'message': f'Song {song_id} flagged successfully'})
-
-# # API endpoint to delete a song
-# @app.route('/api/delete_song/<int:song_id>', methods=['DELETE'])
-# def delete_song(song_id):
-#     song = Song.query.get(song_id)
-#     if not song:
-#         return jsonify({'message': 'Song not found'}), 404
-
-#     db.session.delete(song)
-#     db.session.commit()
-#     return jsonify({'message': f'Song {song_id} deleted successfully'})
 
 
 # API endpoint to fetch lyrics for a specific song

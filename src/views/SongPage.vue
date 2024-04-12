@@ -127,20 +127,28 @@ export default {
         console.error('Error showing lyrics:', error);
       }
     },
+    async confirmDelete(songId) {
+      const confirmed = window.confirm('Are you sure you want to delete this song?');
+      if (confirmed) {
+        try {
+          const response = await fetch(`/api/songs/${songId}`, {
+            method: 'DELETE'
+          });
 
-        // Perform search based on the search query
-        search() {
-      this.query = this.searchQuery;
-      fetch(`/api/search?query=${this.searchQuery}`)
-        .then(response => response.json())
-        .then(data => {
-          this.songs = data;
-        })
-        .catch(error => {
-          console.error('Error searching songs:', error);
-        });
+          if (!response.ok) {
+            throw new Error('Failed to delete song');
+          }
+
+          // If deletion is successful, fetch songs again to update the list
+          this.fetchSongs();
+
+          alert('Song deleted successfully');
+        } catch (error) {
+          console.error('Error deleting song:', error);
+          alert('Failed to delete song');
+        }
+      }
     },
-    
     closeModal() {
       this.isModalVisible = false;
       this.selectedSong = null;
@@ -160,6 +168,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 /* CSS Styles */
