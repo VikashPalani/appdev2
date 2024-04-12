@@ -73,64 +73,96 @@
       <h3>Lyrics</h3>
       <pre>{{ currentLyrics }}</pre>
     </div>
+
+    <!-- Add Song Modal -->
+    <div class="add-song-modal" v-show="isAddSongModalOpen">
+      <h2>Add New Song</h2>
+      <form @submit.prevent="addNewSong">
+        <input type="text" v-model="newSong.genre" placeholder="Genre" required>
+        <input type="text" v-model="newSong.song_name" placeholder="Song Name" required>
+        <input type="text" v-model="newSong.duration" placeholder="Duration" required>
+        <textarea v-model="newSong.lyrics" placeholder="Lyrics" required></textarea>
+        <input type="text" v-model="newSong.creator_name" placeholder="Creator Name" required>
+        <input type="text" v-model="newSong.song_path" placeholder="Song Path" required>
+        <input type="text" v-model="newSong.image_path" placeholder="Image Path" required>
+        <input type="integer" v-model="newSong.avg_rating" placeholder="Average Rating" required>
+        <button type="submit">Add Song</button>
+        <button @click="closeAddSongModal">Cancel</button>
+      </form>
+    </div>
   </div>
 </template>
 
-
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      creator_name: 'John Doe', // Example data (replace with actual data)
-      total_songs: 10, // Example data (replace with actual data)
-      avg_rating: 4.5, // Example data (replace with actual data)
-      genre: 'Pop', // Example data (replace with actual data)
-      songs: [] // Example data (replace with actual data)
+      creator_name: 'John Doe',
+      total_songs: 10,
+      avg_rating: 4.5,
+      genre: 'Pop',
+      songs: [],
+      newSong: {
+        genre: '',
+        song_name: '',
+        duration: '',
+        lyrics: '',
+        creator_name: '',
+        song_path: '',
+        image_path: '',
+        avg_rating: 0
+      },
+      isLyricsPopupOpen: false,
+      isAddSongModalOpen: false
     };
   },
   methods: {
     redirectToAlbumPage() {
-      // Handle redirection to home page
       this.$router.push('/album');
     },
     redirectToLogout() {
-      // Handle logout logic
       this.$router.push('/login');
-      // Redirect to creator login page or perform logout action
     },
     confirmDelete(songId, songName) {
-      // Implement delete confirmation logic
       const result = confirm(`Are you sure you want to delete the song "${songName}"?`);
       if (result) {
-        // Call delete song method
         this.deleteSong(songId);
       }
     },
     deleteSong(songId) {
-      // Implement delete song logic (e.g., make API call to delete song)
+      // Implement delete song logic here (e.g., API call)
       console.log('Deleting song with ID:', songId);
-      // Update songs list after deletion
-      // Example: this.songs = this.songs.filter(song => song.song_id !== songId);
     },
     viewLyrics(songId) {
-      // Implement view lyrics logic (e.g., fetch lyrics from API)
+      // Implement view lyrics logic here (e.g., API call)
       console.log('Viewing lyrics for song with ID:', songId);
-      // Example: make API call to fetch lyrics and display in popup
     },
-    //openEditLyricsModal(songId, existingLyrics) {
-      // Implement logic to open edit lyrics modal
-      //console.log('Opening edit lyrics modal for song with ID:', songId);
-      // Example: populate form with existing lyrics for editing
-    //},
     closeLyricsPopup() {
-      // Implement logic to close lyrics popup
+      this.isLyricsPopupOpen = false;
       console.log('Closing lyrics popup');
-      // Example: hide lyrics popup
     },
     openAddSongModal() {
-      // Implement logic to open add song modal
+      this.isAddSongModalOpen = true;
       console.log('Opening add song modal');
-      // Example: show add song modal
+    },
+    closeAddSongModal() {
+      this.isAddSongModalOpen = false;
+      console.log('Closing add song modal');
+    },
+    addNewSong() {
+      // Implement adding new song logic here (e.g., API call)
+      axios.post('/api/add_song', this.newSong)
+        .then(() => {
+          alert('Song added successfully');
+          this.closeAddSongModal();
+          // Optionally, refresh song list
+        })
+        .catch(error => {
+          console.error('Error adding song:', error);
+          alert('Failed to add song. Please try again.');
+        });
     }
   }
 };
@@ -329,4 +361,38 @@ footer {
   right: 10px;
   cursor: pointer;
 }
+
+.add-song-modal {
+  width: 500px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 2px solid #333;
+  z-index: 1000;
+}
+
+.add-song-modal h2 {
+  margin-bottom: 20px;
+}
+
+.add-song-modal form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-song-modal input,
+.add-song-modal textarea {
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+.add-song-modal button {
+  padding: 12px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
 </style>

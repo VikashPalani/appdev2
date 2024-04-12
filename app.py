@@ -76,12 +76,13 @@ def login():
     password = data.get('password')
     user = User.query.filter_by(name=name, password=password).first()
     if user:
-        session['id'] = user.id
-        session['name'] = user.name
+        # session['id'] = user.id
+        # session['name'] = user.name
 
         return jsonify({'message': 'Login successful', 'role': user.role}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
+ 
     
 # API endpoint to fetch song data
 @app.route('/api/songs')
@@ -194,25 +195,6 @@ def delete_song(song_id):
     return jsonify({'message': f'Song {song_id} deleted successfully'})
 
 
-# # API endpoint to add a new song
-# @app.route('/api/add_song', methods=['POST'])
-# def add_song():
-#     data = request.get_json()
-#     new_song = Song(
-#         genre=data.get('genre'),
-#         song_name=data.get('song_name'),
-#         duration=data.get('duration'),
-#         lyrics=data.get('lyrics'),
-#         creator_name=data.get('creator_name'),
-#         song_path=data.get('song_path'),
-#         image_path=data.get('image_path'),
-#         avg_rating=data.get('avg_rating')
-#     )
-#     db.session.add(new_song)
-#     db.session.commit()
-#     return jsonify({'message': 'Song added successfully'})
-
-
 # @app.route('/api/flag_song/<int:song_id>', methods=['PUT'])
 # def flag_song(song_id):
 #     song = Song.query.get(song_id)
@@ -270,6 +252,25 @@ def admin_data():
     }
 
     return jsonify(data)
+
+
+# API endpoint to add a new song
+@app.route('/api/add_song', methods=['POST'])
+def add_song():
+    data = request.get_json()
+    new_song = Song(
+        genre=data.get('genre'),
+        song_name=data.get('song_name'),
+        duration=data.get('duration'),
+        lyrics=data.get('lyrics'),
+        creator_name=data.get('creator_name'),
+        song_path=data.get('song_path'),
+        image_path=data.get('image_path'),
+        avg_rating=data.get('avg_rating')
+    )
+    db.session.add(new_song)
+    db.session.commit()
+    return jsonify({'message': 'Song added successfully'}), 201
 
 
 if __name__ == "__main__":
