@@ -127,8 +127,8 @@ export default {
   methods: {
 
     fetchSongs() {
-  // Make API call to fetch songs data from backend
-  fetch('/api/songs')
+    // Make API call to fetch songs data from backend
+    fetch('/api/songs')
     .then(response => response.json())
     .then(data => {
       this.songs = data;
@@ -142,10 +142,10 @@ export default {
     });
     },
 
+
+    // Perform search based on the search query
     search() {
-      // Perform search based on the search query
       this.query = this.searchQuery;
-      // Make API call to search songs
       fetch(`/api/search?query=${this.searchQuery}`)
         .then(response => response.json())
         .then(data => {

@@ -127,6 +127,20 @@ export default {
         console.error('Error showing lyrics:', error);
       }
     },
+
+        // Perform search based on the search query
+        search() {
+      this.query = this.searchQuery;
+      fetch(`/api/search?query=${this.searchQuery}`)
+        .then(response => response.json())
+        .then(data => {
+          this.songs = data;
+        })
+        .catch(error => {
+          console.error('Error searching songs:', error);
+        });
+    },
+    
     closeModal() {
       this.isModalVisible = false;
       this.selectedSong = null;

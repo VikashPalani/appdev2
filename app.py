@@ -1,9 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 
+from collections import defaultdict
+from sqlalchemy import func, desc, distinct
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
+
+# from flask_cors import CORS
+# CORS(app)
 
 #MODELS
 
@@ -73,6 +79,24 @@ def login():
         return jsonify({'message': 'Login successful', 'role': user.role}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
+    
+
+@app.route('/api/playlists', methods=['GET'])
+def get_playlists():
+    playlists = Playlist.query.all()
+    grouped_playlists = defaultdict(list)
+    
+    for playlist in playlists:
+        playlist_info = {
+            'song_name': playlist.song_name,
+            'creator_name': playlist.creator_name
+        }
+        grouped_playlists[playlist.playlistname].append(playlist_info)
+    
+    # Convert defaultdict to list of dictionaries
+    playlist_data = [{'playlist_name': key, 'songs': value} for key, value in grouped_playlists.items()]
+    
+    return jsonify(playlists=playlist_data)
 
 
 # API endpoint to fetch song data
@@ -95,34 +119,67 @@ def get_songs():
     return jsonify(song_data)
 
 
-@app.route('/api/playlists', methods=['GET'])
-def get_playlists():
-    playlists = Playlist.query.all()
-    playlist_list = []
-    for playlist in playlists:
-        playlist_data = {
-            'playlistid': playlist.playlistid,
-            'userid': playlist.userid,
-            'playlistname': playlist.playlistname,
-            'song_name': playlist.song_name,
-            'creator_name': playlist.creator_name
-        }
-        playlist_list.append(playlist_data)
+# @app.route('/api/playlists', methods=['GET'])
+# def get_playlists():
+#     playlists = Playlist.query.all()
+#     playlist_list = []
+#     for playlist in playlists:
+#         playlist_data = {
+#             'playlistid': playlist.playlistid,
+#             'userid': playlist.userid,
+#             'playlistname': playlist.playlistname,
+#             'song_name': playlist.song_name,
+#             'creator_name': playlist.creator_name
+#         }
+#         playlist_list.append(playlist_data)
     
-    return jsonify(playlists=playlist_list)
+#     return jsonify(playlists=playlist_list)
 
 
-# @app.route('/api/creator')
-# def get_creator():
-#     creator = Creator.query.all()
-#     creator_data = []
-#     for create in creator:
-#         creator_data.append({
-#             'creatorid':creator.creatorid,
-#             'creatorname':creator.creatorname,
-#             'password':creator.password,
-#         })
-#     return jsonify(creator_data)
+
+@app.route('/api/search', methods=['GET'])
+def search():
+    query = request.args.get('query', '').strip().lower()
+
+    if query:
+        # Perform case-insensitive search without using func.lower()
+        search_results = Song.query.filter(
+            db.func.lower(Song.song_name).contains(query) |
+            db.func.lower(Song.genre).contains(query) |
+            db.func.lower(Song.creator_name).contains(query) |
+            db.cast(Song.avg_rating, db.String).contains(query)
+        ).all()
+
+        # Serialize the search results into JSON format
+        serialized_results = [{
+            'song_id': song.song_id,
+            'genre': song.genre,
+            'song_name': song.song_name,
+            'duration': song.duration,
+            'lyrics': song.lyrics,
+            'creator_name': song.creator_name,
+            'song_path': song.song_path,
+            'image_path': song.image_path,
+            'avg_rating': song.avg_rating
+        } for song in search_results]
+
+        return jsonify(serialized_results)
+    else:
+        # If no query provided, return an empty list (or all songs)
+        songs = Song.query.all()
+        serialized_songs = [{
+            'song_id': song.song_id,
+            'genre': song.genre,
+            'song_name': song.song_name,
+            'duration': song.duration,
+            'lyrics': song.lyrics,
+            'creator_name': song.creator_name,
+            'song_path': song.song_path,
+            'image_path': song.image_path,
+            'avg_rating': song.avg_rating
+        } for song in songs]
+
+        return jsonify(serialized_songs)
 
 
 # API endpoint to add a new song
@@ -171,6 +228,45 @@ def get_song_lyrics(song_id):
     if not song:
         return jsonify({'message': 'Song not found'}), 404
     return jsonify({'lyrics': song.lyrics})
+
+@app.route('/api/admin_data')
+def admin_data():
+    num_users = User.query.count()
+    num_creators = User.query.filter_by(role='creator').count()
+    num_songs = Song.query.count()
+    num_playlists = Playlist.query.with_entities(distinct(Playlist.playlistname)).count()
+    num_genres = Song.query.with_entities(distinct(Song.genre)).count()
+
+    top_creators = (
+        db.session.query(Song.creator_name, func.avg(Song.avg_rating).label('average_rating'))
+        .group_by(Song.creator_name)
+        .order_by(desc(func.avg(Song.avg_rating)))
+        .limit(5)
+        .all()
+    )
+
+    top_songs = (
+        db.session.query(Song.song_name, func.avg(Song.avg_rating).label('average_rating'))
+        .group_by(Song.song_name)
+        .order_by(desc(func.avg(Song.avg_rating)))
+        .limit(5)
+        .all()
+    )
+
+    top_creators_dict = [{'creatorname': row[0], 'average_rating': row[1]} for row in top_creators]
+    top_songs_dict = [{'song_name': row[0], 'average_rating': row[1]} for row in top_songs]
+
+    data = {
+        'num_users': num_users,
+        'num_creators': num_creators,
+        'num_songs': num_songs,
+        'num_playlists': num_playlists,
+        'num_genres': num_genres,
+        'top_creators': top_creators_dict,
+        'top_songs': top_songs_dict
+    }
+
+    return jsonify(data)
 
 
 if __name__ == "__main__":
