@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
 
 from collections import defaultdict
@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
-# from flask_cors import CORS
-# CORS(app)
+from flask_cors import CORS
+CORS(app)
 
 #MODELS
 
@@ -76,6 +76,9 @@ def login():
     password = data.get('password')
     user = User.query.filter_by(name=name, password=password).first()
     if user:
+        session['id'] = user.id
+        session['name'] = user.name
+
         return jsonify({'message': 'Login successful', 'role': user.role}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
@@ -99,22 +102,24 @@ def get_songs():
         })
     return jsonify(song_data)
 
-@app.route('/api/playlists', methods=['GET'])
-def get_playlists():
-    playlists = Playlist.query.all()
-    grouped_playlists = defaultdict(list)
+# @app.route('/api/playlists', methods=['GET'])
+# def get_playlists():
+#     playlists = Playlist.query.all()
+#     grouped_playlists = defaultdict(list)
     
-    for playlist in playlists:
-        playlist_info = {
-            'song_name': playlist.song_name,
-            'creator_name': playlist.creator_name
-        }
-        grouped_playlists[playlist.playlistname].append(playlist_info)
+#     for playlist in playlists:
+#         playlist_info = {
+#             'song_name': playlist.song_name,
+#             'creator_name': playlist.creator_name
+#         }
+#         grouped_playlists[playlist.playlistname].append(playlist_info)
     
-    # Convert defaultdict to list of dictionaries
-    playlist_data = [{'playlist_name': key, 'songs': value} for key, value in grouped_playlists.items()]
+#     # Convert defaultdict to list of dictionaries
+#     playlist_data = [{'playlist_name': key, 'songs': value} for key, value in grouped_playlists.items()]
     
-    return jsonify(playlists=playlist_data)
+#     return jsonify(playlists=playlist_data)
+
+
 
 # @app.route('/api/playlists', methods=['GET'])
 # def get_playlists():
