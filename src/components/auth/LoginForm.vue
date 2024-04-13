@@ -12,6 +12,7 @@
           <input type="text" v-model="name" placeholder="Name" required>
           <input type="password" v-model="password" placeholder="Password" required>
           <button type="submit">Login</button>
+
         </form>
         <div class="signup">
           <p>New to Harmonix? <router-link to="/signup">Sign Up</router-link></p>
@@ -43,9 +44,16 @@ export default {
             password: this.password
           })
         });
+        
         const data = await response.json();
+        
         if (response.ok) {
           // Login successful
+          console.log('Login successful.');
+          console.log('User ID:', data.id);
+          console.log('User Name:', data.name);
+          console.log('User Role:', data.role);
+          
           if (data.role === 'user') {
             this.$router.push('/user');
           } else if (data.role === 'creator') {

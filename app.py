@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
+import sqlite3
 
 from collections import defaultdict
 from sqlalchemy import func, desc, distinct
@@ -69,17 +70,16 @@ def signup():
     return jsonify({'message': 'User signed up successfully'}), 201
 
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/api/login', methods=['GET','POST'])
 def login():
     data = request.get_json()
     name = data.get('name')
     password = data.get('password')
     user = User.query.filter_by(name=name, password=password).first()
     if user:
-        # session['id'] = user.id
-        # session['name'] = user.name
 
-        return jsonify({'message': 'Login successful', 'role': user.role}), 200
+        return jsonify({'message': 'Login successful','id':user.id,'name':user.name,'role': user.role}), 200
+    
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
  
