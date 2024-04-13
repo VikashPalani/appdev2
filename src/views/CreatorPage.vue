@@ -78,6 +78,17 @@
       </div>
     </div>
 
+    <!-- Edit Lyrics Modal -->
+    <div class="modal" v-if="isEditModalOpen">
+      <div class="modal-content">
+        <span class="close" @click="closeEditModal">&times;</span>
+        <h3>Edit Lyrics{{ selectedSong.song_name }}</h3>
+        <textarea v-model="selectedSong.lyrics" placeholder="Enter updated lyrics" required></textarea>
+        <button @click="saveEditedLyrics">Save</button>
+        <button @click="closeEditModal">Cancel</button>
+      </div>
+    </div>
+
     <!-- Add Song Modal -->
     <div class="add-song-modal" v-show="isAddSongModalOpen">
       <h2>Add New Song</h2>
@@ -119,7 +130,8 @@ export default {
         image_path: '',
         avg_rating: 0
       },
-      isAddSongModalOpen: false
+      isAddSongModalOpen: false,
+      isEditModalOpen: false
     };
   },
   methods: {
@@ -155,6 +167,28 @@ export default {
         })
         .catch(error => {
           console.error('Error fetching lyrics:', error);
+        });
+    },
+    
+    openEditLyricsModal(songId, currentLyrics) {
+      this.selectedSong = { ...this.selectedSong, song_id: songId, lyrics: currentLyrics };
+      this.isEditModalOpen = true;
+    },
+    closeEditModal() {
+      this.isEditModalOpen = false;
+      this.selectedSong = null;
+    },
+    saveEditedLyrics() {
+      const { song_id, lyrics } = this.selectedSong;
+      axios.put(`/api/songs/${song_id}`, { lyrics })
+        .then(() => {
+          this.closeEditModal();
+          this.fetchSongs(); // Refresh songs after update
+          alert('Lyrics updated successfully');
+        })
+        .catch(error => {
+          console.error('Error updating lyrics:', error);
+          alert('Failed to update lyrics');
         });
     },
     closeModal() {
@@ -412,6 +446,7 @@ footer {
   max-width: 600px;
   text-align: center;
   position: relative;
+  margin: 15% auto;
 }
 
 .close {
@@ -421,10 +456,20 @@ footer {
   font-size: 24px;
   cursor: pointer;
   color: #aaa;
+  font-weight: bold;
 }
 
 .close:hover {
   color: black;
+}
+
+
+.modal-content textarea {
+  width: 100%;
+  height: 200px;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
 }
 
 .add-song-modal {

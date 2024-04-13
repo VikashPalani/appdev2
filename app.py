@@ -228,6 +228,21 @@ def delete_song(song_id):
 #     db.session.commit()
 #     return jsonify({'message': f'Song {song_id} flagged successfully'})
 
+# API endpoint to update lyrics for a specific song
+@app.route('/api/songs/<int:song_id>', methods=['PUT'])
+def update_song_lyrics(song_id):
+    data = request.get_json()
+    new_lyrics = data.get('lyrics')
+
+    song = Song.query.get(song_id)
+    if not song:
+        return jsonify({'message': 'Song not found'}), 404
+
+    song.lyrics = new_lyrics
+    db.session.commit()
+
+    return jsonify({'message': f'Lyrics for song {song_id} updated successfully'}), 200
+
 
 # API endpoint to fetch lyrics for a specific song
 @app.route('/api/songs/<int:song_id>/lyrics', methods=['GET'])
