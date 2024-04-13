@@ -15,20 +15,20 @@
     <div class="user-info-container">
       <div class="user-info">
         <img class="user-image" src="@/assets/creator2.jpg" alt="Creator Photo">
-        <p>{{ userName }}</p> <!-- Updated to use userName -->
+        <p>{{ userName }}</p>
       </div>
       <div class="stats-container">
         <div class="stats-box">
           <p>Total Songs</p>
-          <p>{{ total_songs }}</p>
+          <p>{{ songs.length }}</p>
         </div>
         <div class="stats-box">
           <p>Average Rating</p>
-          <p>{{ avg_rating }}</p>
+          <p>{{ averageRating }}</p>
         </div>
         <div class="stats-box">
           <p>Genre</p>
-          <p>{{ genre }}</p>
+          <p>{{ firstGenre }}</p>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
               <button class="view-lyrics-button" @click="showLyrics(song)">View Lyrics</button>
             </td>
             <td><button class="edit-button" @click="openEditLyricsModal(song.song_id, song.lyrics)">Edit</button></td>
-            <td><button class="delete-button" @click="confirmDelete(song.song_id, song.song_name)">Delete</button></td>
+            <td><button class="delete-button" @click="confirmDelete(song.song_id)">Delete</button></td>
           </tr>
         </tbody>
       </table>
@@ -89,7 +89,7 @@
         <input type="text" v-model="newSong.creator_name" placeholder="Creator Name" required>
         <input type="text" v-model="newSong.song_path" placeholder="Song Path" required>
         <input type="text" v-model="newSong.image_path" placeholder="Image Path" required>
-        <input type="integer" v-model="newSong.avg_rating" placeholder="Average Rating" required>
+        <input type="number" v-model="newSong.avg_rating" placeholder="Average Rating" required>
         <button type="submit">Add Song</button>
         <button @click="closeAddSongModal">Cancel</button>
       </form>
@@ -103,14 +103,12 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      searchQuery: '',
+      userName: localStorage.getItem('userName') || 'John Doe',
+      songs: [],
       isModalVisible: false,
       selectedSong: null,
-      userName: localStorage.getItem('userName') || 'John Doe', // Use userName from localStorage or default to 'John Doe'
-      total_songs: 10,
-      avg_rating: 4.5,
-      genre: 'Pop',
-      songs: [],
+      averageRating: 0,
+      firstGenre: '',
       newSong: {
         genre: '',
         song_name: '',
@@ -121,119 +119,104 @@ export default {
         image_path: '',
         avg_rating: 0
       },
-      isLyricsPopupOpen: false,
       isAddSongModalOpen: false
     };
   },
   methods: {
-
-    // Function to filter songs based on creator_name
-    filterSongsByCreator() {
-      const filteredSongs = this.songs.filter(song => song.creator_name === this.userName);
-      this.songs = filteredSongs; // Update songs array with filtered songs
-    },
-    // Function to fetch all songs from backend (original API call)
-    fetchAllSongs() {
+    fetchSongs() {
       axios.get('/api/songs')
         .then(response => {
-          this.songs = response.data; // Update songs array with all songs
-          this.filterSongsByCreator(); // Filter songs based on creator_name
+          this.songs = response.data;
+          this.filterSongsByCreator();
         })
         .catch(error => {
           console.error('Error fetching songs:', error);
-          // Handle error (e.g., show error message)
         });
     },
-
-    async showLyrics(song) {
-      try {
-        const response = await fetch(`/api/songs/${song.song_id}/lyrics`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch lyrics');
-        }
-        const lyricsData = await response.json();
-
-        // Set the selected song with lyrics
-        this.selectedSong = {
-          ...song,
-          lyrics: lyricsData.lyrics // Assuming the response contains { lyrics: '...' }
-        };
-
-        // Display the modal
-        this.isModalVisible = true;
-      } catch (error) {
-        console.error('Error showing lyrics:', error);
+    filterSongsByCreator() {
+      this.songs = this.songs.filter(song => song.creator_name === this.userName);
+      this.calculateAverageRating();
+    },
+    calculateAverageRating() {
+      if (this.songs.length > 0) {
+        const totalRating = this.songs.reduce((acc, song) => acc + song.avg_rating, 0);
+        this.averageRating = (totalRating / this.songs.length).toFixed(2);
+        this.firstGenre = this.songs[0].genre;
+      } else {
+        this.averageRating = 0;
+        this.firstGenre = '';
       }
     },
-
+    showLyrics(song) {
+      axios.get(`/api/songs/${song.song_id}/lyrics`)
+        .then(response => {
+          this.selectedSong = { ...song, lyrics: response.data.lyrics };
+          this.isModalVisible = true;
+        })
+        .catch(error => {
+          console.error('Error fetching lyrics:', error);
+        });
+    },
     closeModal() {
       this.isModalVisible = false;
       this.selectedSong = null;
     },
-
     redirectToAlbumPage() {
       this.$router.push('/album');
     },
     redirectToLogout() {
       this.$router.push('/login');
     },
-    deleteSong(songId) {
-      // Implement delete song logic here (e.g., API call)
-      console.log('Deleting song with ID:', songId);
+    confirmDelete(songId) {
+      const confirmed = window.confirm('Are you sure you want to delete this song?');
+      if (confirmed) {
+        axios.delete(`/api/songs/${songId}`)
+          .then(() => {
+            this.fetchSongs();
+            alert('Song deleted successfully');
+          })
+          .catch(error => {
+            console.error('Error deleting song:', error);
+          });
+      }
     },
     openAddSongModal() {
       this.isAddSongModalOpen = true;
-      console.log('Opening add song modal');
     },
     closeAddSongModal() {
       this.isAddSongModalOpen = false;
-      console.log('Closing add song modal');
+      this.resetNewSong();
     },
     addNewSong() {
-      // Implement adding new song logic here (e.g., API call)
       axios.post('/api/add_song', this.newSong)
         .then(() => {
-          alert('Song added successfully');
           this.closeAddSongModal();
-          // Optionally, refresh song list
+          this.fetchSongs();
+          alert('Song added successfully');
         })
         .catch(error => {
           console.error('Error adding song:', error);
-          alert('Failed to add song. Please try again.');
+          alert('Failed to add song');
         });
     },
-
-    async confirmDelete(songId) {
-      const confirmed = window.confirm('Are you sure you want to delete this song?');
-      if (confirmed) {
-        try {
-          const response = await fetch(`/api/songs/${songId}`, {
-            method: 'DELETE'
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to delete song');
-          }
-
-          // If deletion is successful, fetch songs again to update the list
-          this.fetchSongs();
-
-          alert('Song deleted successfully');
-        } catch (error) {
-          console.error('Error deleting song:', error);
-          // alert('Failed to delete song');
-        }
-      }
-    },
+    resetNewSong() {
+      this.newSong = {
+        genre: '',
+        song_name: '',
+        duration: '',
+        lyrics: '',
+        creator_name: '',
+        song_path: '',
+        image_path: '',
+        avg_rating: 0
+      };
+    }
   },
-
   mounted() {
-    this.fetchAllSongs(); // Call function to fetch all songs when component is mounted
+    this.fetchSongs();
   }
 };
 </script>
-
-
 <style scoped>
 /* CSS Styles */
 
