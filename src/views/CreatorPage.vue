@@ -44,7 +44,7 @@
         <thead>
           <tr>
             <th>Song Name</th>
-            <th>View Lyrics</th>
+            <th>Lyrics</th>
             <th>Edit Lyrics</th>
             <th>Delete Song</th>
           </tr>
@@ -52,7 +52,9 @@
         <tbody>
           <tr v-for="song in songs" :key="song.song_id">
             <td>{{ song.song_name }}</td>
-            <td><button class="view-lyrics-button" @click="showLyrics(song)">View Lyrics</button></td>
+            <td>
+              <button class="view-lyrics-button" @click="showLyrics(song)">View Lyrics</button>
+            </td>
             <td><button class="edit-button" @click="openEditLyricsModal(song.song_id, song.lyrics)">Edit</button></td>
             <td><button class="delete-button" @click="confirmDelete(song.song_id, song.song_name)">Delete</button></td>
           </tr>
@@ -67,11 +69,13 @@
       <p>Contact: contact@harmonix.com</p>
     </footer>
 
-    <!-- Lyrics Popup -->
-    <div class="lyrics-popup" v-show="isLyricsPopupOpen">
-      <span class="close-popup" @click="closeLyricsPopup">&times;</span>
-      <h3>Lyrics</h3>
-      <pre>{{ currentLyrics }}</pre>
+    <!-- Modal for Lyrics -->
+    <div class="modal" v-if="isModalVisible">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h3 v-if="selectedSong">{{ selectedSong.song_name }}</h3>
+        <pre v-if="selectedSong && selectedSong.lyrics">{{ selectedSong.lyrics }}</pre>
+      </div>
     </div>
 
     <!-- Add Song Modal -->
@@ -99,6 +103,9 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      searchQuery: '',
+      isModalVisible: false,
+      selectedSong: null,
       userName: localStorage.getItem('userName') || 'John Doe', // Use userName from localStorage or default to 'John Doe'
       total_songs: 10,
       avg_rating: 4.5,
@@ -138,6 +145,32 @@ export default {
         });
     },
 
+    async showLyrics(song) {
+      try {
+        const response = await fetch(`/api/songs/${song.song_id}/lyrics`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch lyrics');
+        }
+        const lyricsData = await response.json();
+
+        // Set the selected song with lyrics
+        this.selectedSong = {
+          ...song,
+          lyrics: lyricsData.lyrics // Assuming the response contains { lyrics: '...' }
+        };
+
+        // Display the modal
+        this.isModalVisible = true;
+      } catch (error) {
+        console.error('Error showing lyrics:', error);
+      }
+    },
+
+    closeModal() {
+      this.isModalVisible = false;
+      this.selectedSong = null;
+    },
+
     redirectToAlbumPage() {
       this.$router.push('/album');
     },
@@ -147,14 +180,6 @@ export default {
     deleteSong(songId) {
       // Implement delete song logic here (e.g., API call)
       console.log('Deleting song with ID:', songId);
-    },
-    viewLyrics(songId) {
-      // Implement view lyrics logic here (e.g., API call)
-      console.log('Viewing lyrics for song with ID:', songId);
-    },
-    closeLyricsPopup() {
-      this.isLyricsPopupOpen = false;
-      console.log('Closing lyrics popup');
     },
     openAddSongModal() {
       this.isAddSongModalOpen = true;
@@ -383,23 +408,40 @@ footer {
   margin-top: auto;
 }
 
-.lyrics-popup {
-  display: none;
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  background-color: #fff;
-  border: 2px solid #333;
   z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.close-popup {
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+  position: relative;
+}
+
+.close {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 20px;
+  font-size: 24px;
   cursor: pointer;
+  color: #aaa;
+}
+
+.close:hover {
+  color: black;
 }
 
 .add-song-modal {
