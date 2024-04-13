@@ -20,7 +20,7 @@
         <div class="user-section">
           <img class="user-photo" src="@/assets/creator1.jpg" alt="User Photo">
           <div class="user-details">
-            <p class="user-name">User {{ user_id }}</p>
+            <p class="user-name">{{ user_id }}</p>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@
 export default {
   data() {
     return {
-      user_id: '123', // Example user ID
+      user_id: localStorage.getItem('userName'),
       unique_playlists: ['Playlist 1', 'Playlist 2', 'Playlist 3'], // Example playlists
       newPlaylistName: '', // Input field for new playlist name
       displayedSongs: [], // Filtered songs to display

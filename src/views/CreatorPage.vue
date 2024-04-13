@@ -119,21 +119,40 @@ export default {
     };
   },
   methods: {
+
+    // Function to filter songs based on creator_name
+    filterSongsByCreator() {
+      const filteredSongs = this.songs.filter(song => song.creator_name === this.userName);
+      this.songs = filteredSongs; // Update songs array with filtered songs
+    },
+    // Function to fetch all songs from backend (original API call)
+    fetchAllSongs() {
+      axios.get('/api/songs')
+        .then(response => {
+          this.songs = response.data; // Update songs array with all songs
+          this.filterSongsByCreator(); // Filter songs based on creator_name
+        })
+        .catch(error => {
+          console.error('Error fetching songs:', error);
+          // Handle error (e.g., show error message)
+        });
+    },
+
     redirectToAlbumPage() {
       this.$router.push('/album');
     },
     redirectToLogout() {
       this.$router.push('/login');
     },
+    deleteSong(songId) {
+      // Implement delete song logic here (e.g., API call)
+      console.log('Deleting song with ID:', songId);
+    },
     confirmDelete(songId, songName) {
       const result = confirm(`Are you sure you want to delete the song "${songName}"?`);
       if (result) {
         this.deleteSong(songId);
       }
-    },
-    deleteSong(songId) {
-      // Implement delete song logic here (e.g., API call)
-      console.log('Deleting song with ID:', songId);
     },
     viewLyrics(songId) {
       // Implement view lyrics logic here (e.g., API call)
@@ -164,6 +183,10 @@ export default {
           alert('Failed to add song. Please try again.');
         });
     }
+  },
+
+  mounted() {
+    this.fetchAllSongs(); // Call function to fetch all songs when component is mounted
   }
 };
 </script>
