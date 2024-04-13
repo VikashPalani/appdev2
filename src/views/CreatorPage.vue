@@ -52,7 +52,7 @@
         <tbody>
           <tr v-for="song in songs" :key="song.song_id">
             <td>{{ song.song_name }}</td>
-            <td><button class="view-button" @click="viewLyrics(song.song_id)">View</button></td>
+            <td><button class="view-lyrics-button" @click="showLyrics(song)">View Lyrics</button></td>
             <td><button class="edit-button" @click="openEditLyricsModal(song.song_id, song.lyrics)">Edit</button></td>
             <td><button class="delete-button" @click="confirmDelete(song.song_id, song.song_name)">Delete</button></td>
           </tr>
@@ -148,12 +148,6 @@ export default {
       // Implement delete song logic here (e.g., API call)
       console.log('Deleting song with ID:', songId);
     },
-    confirmDelete(songId, songName) {
-      const result = confirm(`Are you sure you want to delete the song "${songName}"?`);
-      if (result) {
-        this.deleteSong(songId);
-      }
-    },
     viewLyrics(songId) {
       // Implement view lyrics logic here (e.g., API call)
       console.log('Viewing lyrics for song with ID:', songId);
@@ -182,7 +176,30 @@ export default {
           console.error('Error adding song:', error);
           alert('Failed to add song. Please try again.');
         });
-    }
+    },
+
+    async confirmDelete(songId) {
+      const confirmed = window.confirm('Are you sure you want to delete this song?');
+      if (confirmed) {
+        try {
+          const response = await fetch(`/api/songs/${songId}`, {
+            method: 'DELETE'
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to delete song');
+          }
+
+          // If deletion is successful, fetch songs again to update the list
+          this.fetchSongs();
+
+          alert('Song deleted successfully');
+        } catch (error) {
+          console.error('Error deleting song:', error);
+          // alert('Failed to delete song');
+        }
+      }
+    },
   },
 
   mounted() {
