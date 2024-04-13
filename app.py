@@ -40,7 +40,7 @@ class Playlist(db.Model):
     __tablename__ = 'playlist'
 
     playlistid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    userid = db.Column(db.Integer)
+    id = db.Column(db.Integer)
     playlistname = db.Column(db.Text)
     song_name = db.Column(db.Text, nullable=False)
     creator_name = db.Column(db.Text, nullable=False)
@@ -50,7 +50,7 @@ class Album(db.Model):
     __tablename__ = 'album'
 
     albumid = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    creatorid = db.Column(db.Integer)
+    id = db.Column(db.Integer)
     albumname = db.Column(db.Text)
     song_name = db.Column(db.Text, nullable=False)
     genre = db.Column(db.Text, nullable=False)
