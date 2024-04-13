@@ -15,7 +15,7 @@
     <div class="user-info-container">
       <div class="user-info">
         <img class="user-image" src="@/assets/creator2.jpg" alt="Creator Photo">
-        <p>{{ creator_name }}</p>
+        <p>{{ userName }}</p> <!-- Updated to use userName -->
       </div>
       <div class="stats-container">
         <div class="stats-box">
@@ -99,7 +99,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      creator_name: 'John Doe',
+      userName: localStorage.getItem('userName') || 'John Doe', // Use userName from localStorage or default to 'John Doe'
       total_songs: 10,
       avg_rating: 4.5,
       genre: 'Pop',

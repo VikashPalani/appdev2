@@ -113,6 +113,39 @@ export default {
   },
 
   methods: {
+
+    async handleLogin() {
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: this.name,
+            password: this.password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Login successful
+          console.log('Login successful.');
+          console.log('User ID:', data.id);
+          console.log('User Name:', data.name);
+          console.log('User Role:', data.role);
+        } else {
+          // Login failed
+          this.error = data.message || 'Login failed. Please try again.';
+        }
+      } 
+      catch (error) {
+        console.error('Error:', error);
+        this.error = 'Login failed. Please try again.';
+      }
+    },
+
     // Fetch songs from backend
     async fetchSongs() {
       try {

@@ -53,6 +53,11 @@ export default {
           console.log('User ID:', data.id);
           console.log('User Name:', data.name);
           console.log('User Role:', data.role);
+
+          // Store user data in localStorage
+          localStorage.setItem('userId', data.id);
+          localStorage.setItem('userName', data.name);
+          localStorage.setItem('userRole', data.role);
           
           if (data.role === 'user') {
             this.$router.push('/user');
