@@ -52,7 +52,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(song, index) in songs" :key="song.song_id">
+              <tr v-for="(song, index) in displayedSongs" :key="song.song_id">
                 <td>{{ index + 1 }}</td>
                 <td>{{ song.song_name }}</td>
                 <td>{{ song.creator_name }}</td>
@@ -93,22 +93,27 @@
 export default {
   data() {
     return {
-      searchQuery: '',
+      user_id: '123', // Example user ID
+      unique_playlists: ['Playlist 1', 'Playlist 2', 'Playlist 3'], // Example playlists
+      newPlaylistName: '', // Input field for new playlist name
+      displayedSongs: [], // Filtered songs to display
       isModalVisible: false,
-      selectedSong: null,
+      modalSongs: [], // Songs for modal (not used in current implementation)
       songs: [] // This will be populated with songs data from backend
     };
   },
 
-
   computed: {
-    displayedSongs() {
+    // Filter songs based on search query
+    filteredSongs() {
       return this.songs.filter(song =>
         song.song_name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     }
   },
+
   methods: {
+    // Fetch songs from backend
     async fetchSongs() {
       try {
         const response = await fetch('/api/songs');
@@ -116,63 +121,66 @@ export default {
           throw new Error('Failed to fetch songs');
         }
         this.songs = await response.json();
+        this.displayedSongs = this.songs; // Initialize displayedSongs with all songs
       } catch (error) {
         console.error('Error fetching songs:', error);
       }
     },
-    // async showLyrics(song) {
-    //   try {
-    //     const response = await fetch(`/api/songs/${song.song_id}/lyrics`);
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch lyrics');
-    //     }
-    //     const lyricsData = await response.json();
 
-    //     // Set the selected song with lyrics
-    //     this.selectedSong = {
-    //       ...song,
-    //       lyrics: lyricsData.lyrics // Assuming the response contains { lyrics: '...' }
-    //     };
+    // Add song to playlist
+    async addToPlaylist(songName, creatorName) {
+      try {
+        const playlistName = this.newPlaylistName.trim();
 
-    //     // Display the modal
-    //     this.isModalVisible = true;
-    //   } catch (error) {
-    //     console.error('Error showing lyrics:', error);
-    //   }
-    // },
-    // closeModal() {
-    //   this.isModalVisible = false;
-    //   this.selectedSong = null;
-    // },
+        if (!playlistName) {
+          alert('Please enter a playlist name');
+          return;
+        }
+
+        const response = await fetch('/api/add_to_playlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            playlist_name: playlistName,
+            songs: [
+              {
+                song_name: songName,
+                creator_name: creatorName
+              }
+            ]
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add song to playlist');
+        }
+
+        alert(`"${songName}" by ${creatorName} added to playlist: ${playlistName}`);
+        this.newPlaylistName = ''; // Clear input field after adding to playlist
+      } catch (error) {
+        console.error('Error adding song to playlist:', error);
+        alert('Failed to add song to playlist. Please try again.');
+      }
+    },
+
+    // Redirect to home (replace with appropriate route)
     redirectToHome() {
-      // Redirect to admin dashboard (replace with your route)
       this.$router.push('/user');
     },
-    searchSongs() {
-      // Implement search logic here (e.g., filter songs in displayedSongs)
-      console.log('Searching songs with query:', this.searchQuery);
+
+    // Close modal (not used in current implementation)
+    closeModal() {
+      this.isModalVisible = false;
     }
   },
+
   mounted() {
     // Fetch songs when component is mounted
     this.fetchSongs();
-  },
-
-
-  closeModal() {
-    this.isModalVisible = false;
-  },
-  addToPlaylist(songName, creatorName) {
-    // Placeholder for adding song to playlist logic
-    alert(`Add "${songName}" by ${creatorName} to the playlist: ${this.newPlaylistName}`);
-    // Implement API call or logic to add song to the selected playlist
-  },
-  redirectToHome() {
-    // Example redirection to home
-    this.$router.push('/user');
   }
 };
-
 </script>
 
 

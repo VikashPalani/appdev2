@@ -138,6 +138,25 @@ def get_songs():
     
 #     return jsonify(playlists=playlist_list)
 
+# Route to add songs to playlist
+@app.route('/api/add_to_playlist', methods=['POST'])
+def add_to_playlist():
+    data = request.get_json()
+
+    playlist_name = data.get('playlist_name')
+    songs = data.get('songs')  # List of songs to add to the playlist
+
+    for song in songs:
+        new_playlist = Playlist(
+            playlistname=playlist_name,
+            song_name=song['song_name'],
+            creator_name=song['creator_name']
+        )
+        db.session.add(new_playlist)
+
+    db.session.commit()
+    return jsonify({'message': 'Songs added to playlist successfully'}), 201
+
 
 @app.route('/api/search', methods=['GET'])
 def search():
