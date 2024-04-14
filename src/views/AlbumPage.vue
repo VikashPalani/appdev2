@@ -27,15 +27,50 @@
       <div class="right-section">
         <div class="playlist-section">
           <div class="playlist-container">
-            <button
-              v-for="album in unique_albums"
-              :key="album"
-              class="playlist-box"
-              @click="displaySongs(album)"
+            <div
+            v-for="album in uniqueAlbums"
+            :key="album.album_id"
+            class="playlist-box"
+            @click="displayAlbumsForSelectedAlbum(album.album_name)"
             >
-              {{ album }}
-            </button>
+            <div class="album-name">{{ album.album_name }}</div>
+            <ul class="song-list" v-if="album.album_name === selectedAlbum">
+              <li v-for="song in songsInAlbum" :key="song.song_id">
+                {{ song.song_name }} by {{ song.creator_name }}
+              </li>
+            </ul>
           </div>
+
+          <!-- Display Matching Albums Table -->
+          <div v-if="matchingAlbums.length > 0">
+            <h3>Matching Albums</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Album Name</th>
+                  <th>Song Name</th>
+                  <th>Creator Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="album in matchingAlbums" :key="album.album_id">
+                  <td>{{ album.album_name }}</td>
+                  <td>{{ album.song_name }}</td>
+                  <td>{{ album.creator_name }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+        <!-- Songs Section (display songs of selected album) -->
+        <div v-if="selectedAlbum" class="songs-section">
+          <ul>
+            <li v-for="song in songsInAlbum" :key="song.song_id">
+              {{ song.song_name }} by {{ song.creator_name }}
+            </li>
+          </ul>
         </div>
 
         <div class="separator-line"></div>
@@ -94,14 +129,61 @@ export default {
   data() {
     return {
       userName: localStorage.getItem('userName') || 'John Doe',
-      unique_albums: ['Album 1', 'Album 2', 'Album 3'], // Example unique albums
+      uniqueAlbums: [], // Example unique albums
       songs: [], // Populate with actual data or fetch from API
       newAlbumName: '',
       isModalVisible: false,
-      modalSongs: []
+      modalSongs: [],
+      albums: [], // Array to store real album data from API
+      selectedAlbum: null, // To keep track of the selected album
+      songsInAlbum: [], // Array to store songs of the selected album
+      matchingAlbums: [] // New property to store matching albums
     };
   },
   methods: {
+
+    displayAlbumsForSelectedAlbum(albumName) {
+      this.selectedAlbum = albumName;
+      const userName = localStorage.getItem('userName');
+      axios.get(`/api/albums/${encodeURIComponent(albumName)}/matching_albums?userName=${userName}`)
+        .then(response => {
+          this.matchingAlbums = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching matching albums:', error);
+        });
+    },
+    fetchAlbums() {
+      axios.get('/api/albums')
+        .then(response => {
+          this.albums = response.data;
+          this.uniqueAlbums = this.getUniqueAlbums(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching albums:', error);
+        });
+    },
+    getUniqueAlbums(albums) {
+      const uniqueAlbums = [];
+      const albumNames = new Set();
+      albums.forEach(album => {
+        if (!albumNames.has(album.album_name)) {
+          albumNames.add(album.album_name);
+          uniqueAlbums.push(album);
+        }
+      });
+      return uniqueAlbums;
+    },
+    displaySongs(album) {
+      this.selectedAlbum = album.album_name;
+      axios.get(`/api/albums/${album.album_id}/songs`)
+        .then(response => {
+          this.songsInAlbum = response.data;
+        })
+        .catch(error => {
+          console.error(`Error fetching songs for album ${album.album_name}:`, error);
+        });
+    },
     fetchSongs() {
       axios.get('/api/songs')
         .then(response => {
@@ -115,19 +197,43 @@ export default {
     closeModal() {
       this.isModalVisible = false;
     },
-    addToAlbum(songName, creatorName) {
-      // Placeholder for adding song to album logic
-      alert(`Add "${songName}" by ${creatorName} to the album: ${this.newAlbumName}`);
-      // Implement API call or logic to add song to the selected album
-    },
     redirectToHome() {
       // Example redirection to home
       this.$router.push('/creator');
-    }
+    },
+    
+    addToAlbum(songName, creatorName) {
+      if (!this.newAlbumName) {
+        alert('Please enter an album name.');
+        return;
+      }
+
+      const data = {
+        song_name: songName,
+        creator_name: creatorName,
+        album_name: this.newAlbumName
+      };
+
+      axios.post('/api/add_to_album', data)
+        .then(response => {
+          // Check if the request was successful (status code 201)
+          if (response.status === 201) {
+            alert('Song added to album successfully!');
+            // Optionally, you can update the UI or perform additional actions after success
+          } else {
+            alert('Failed to add song to album. Please try again.');
+          }
+        })
+        .catch(error => {
+          console.error('Error adding song to album:', error);
+          alert('Failed to add song to album. Please try again.');
+        });
+      },
   },
   mounted() {
     // Fetch songs when the component is mounted
     this.fetchSongs();
+    this.fetchAlbums(); // Fetch albums when the component is mounted
   }
 };
 </script>
@@ -321,6 +427,57 @@ button.add-button[type="submit"] {
 
 button.add-button[type="submit"]:hover {
   background-color: #555;
+}
+
+.playlist-box {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background-color: #f2f2f2;
+  border: 2px solid #E35F21;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: #333;
+  font-size: 16px;
+  overflow: hidden;
+}
+
+.album-name {
+  position: absolute;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.song-list {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  list-style: none;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  max-height: 80%;
+  overflow-y: auto;
+  display: none;
+}
+
+.playlist-box:hover .song-list {
+  display: block;
+}
+
+.song-list li {
+  padding: 8px;
 }
 
 footer {

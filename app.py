@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
 import sqlite3
 
 from collections import defaultdict
@@ -55,6 +56,7 @@ class Album(db.Model):
     albumname = db.Column(db.Text)
     song_name = db.Column(db.Text, nullable=False)
     genre = db.Column(db.Text, nullable=False)
+    creator_name = db.Column(db.Text, nullable=False)
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -161,6 +163,106 @@ def add_to_playlist():
 
     db.session.commit()
     return jsonify({'message': 'Songs added to playlist successfully'}), 201
+
+# Route to add a song to an album
+@app.route('/api/add_to_album', methods=['POST'])
+def add_to_album():
+    data = request.get_json()
+    song_name = data.get('song_name')
+    creator_name = data.get('creator_name')
+    album_name = data.get('album_name')
+
+    # Validate required fields
+    if not (song_name and creator_name and album_name):
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    try:
+        # Check if album exists or create a new one if needed
+        album = Album.query.filter_by(albumname=album_name).first()
+        if not album:
+            album = Album(albumname=album_name)  # Create new album
+            db.session.add(album)
+            db.session.commit()
+
+        # Add the song to the album
+        new_album_song = Album(
+            id=7,
+            albumname=album_name,
+            song_name=song_name,
+            creator_name=creator_name,
+            genre='Pop'  # Update with appropriate genre if needed
+        )
+        db.session.add(new_album_song)
+        db.session.commit()
+
+        return jsonify({'message': 'Song added to album successfully'}), 201
+
+    except SQLAlchemyError as e:
+        # Handle SQLAlchemy errors (e.g., database connection issues, integrity errors)
+        db.session.rollback()  # Rollback any changes made before the exception
+        print(f"SQLAlchemy Error: {str(e)}")
+        return jsonify({'message': 'Failed to add song to album. Please try again.'}), 500
+
+    except Exception as e:
+        # Handle generic exceptions
+        print(f"Error adding song to album: {str(e)}")
+        return jsonify({'message': 'Failed to add song to album. Please try again.'}), 500
+    
+
+# API endpoint to fetch all albums
+@app.route('/api/albums', methods=['GET'])
+def get_albums():
+    albums = Album.query.all()
+    album_data = []
+    for album in albums:
+        album_data.append({
+            'album_id': album.albumid,
+            'album_name': album.albumname,
+            'genre': album.genre,
+            'creator_name': album.creator_name
+            # You can add more fields as needed
+        })
+    return jsonify(album_data)
+
+# API endpoint to fetch songs for a specific album
+@app.route('/api/albums/<int:album_id>/songs', methods=['GET'])
+def get_songs_in_album(album_id):
+    songs_in_album = Song.query.filter_by(album_id=album_id).all()
+    song_data = []
+    for song in songs_in_album:
+        song_data.append({
+            'song_id': song.song_id,
+            'genre': song.genre,
+            'song_name': song.song_name,
+            'duration': song.duration,
+            'lyrics': song.lyrics,
+            'creator_name': song.creator_name,
+            'song_path': song.song_path,
+            'image_path': song.image_path,
+            'avg_rating': song.avg_rating
+            # Add more song attributes as needed
+        })
+    return jsonify(song_data)
+
+# API endpoint to fetch albums matching a specific album name
+@app.route('/api/albums/<string:album_name>/matching_albums', methods=['GET'])
+def get_matching_albums(album_name):
+    try:
+        user_name = request.args.get('userName')
+        matching_albums = Album.query.filter_by(albumname=album_name, creator_name=user_name).all()
+        album_data = []
+        for album in matching_albums:
+            album_data.append({
+                'album_id': album.albumid,
+                'album_name': album.albumname,
+                'song_name': album.song_name,
+                'creator_name': album.creator_name
+                # Add more album attributes as needed
+            })
+        return jsonify(album_data), 200
+    except Exception as e:
+        print(f"Error fetching matching albums: {str(e)}")
+        return jsonify({'message': 'Failed to fetch matching albums'}), 500
 
 
 @app.route('/api/search', methods=['GET'])
