@@ -414,5 +414,50 @@ def add_song():
     return jsonify({'message': 'Song added successfully'}), 201
 
 
+    
+# Endpoint to fetch unique playlist names
+@app.route('/api/playlists', methods=['GET'])
+def get_unique_playlists():
+    try:
+        playlists = Playlist.query.with_entities(distinct(Playlist.playlistname)).all()
+        unique_playlists = [playlist[0] for playlist in playlists]
+        return jsonify(unique_playlists), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route to fetch songs for a specific playlist
+@app.route('/api/playlists/<playlist_name>/songs', methods=['GET'])
+def get_songs_by_playlist(playlist_name):
+    try:
+        # Query the Playlist table to retrieve songs by playlist name
+        playlist = Playlist.query.filter_by(playlistname=playlist_name).first()
+
+        if not playlist:
+            return jsonify({'message': 'Playlist not found'}), 404
+
+        # Retrieve the songs (song_name and creator_name) associated with the playlist
+        songs = Song.query.filter_by(playlistname=playlist_name).all()
+
+        # Serialize song data into JSON format
+        song_data = []
+        for song in songs:
+            song_data.append({
+                'song_name': song.song_name,
+                'creator_name': song.creator_name
+                # Add more song attributes as needed
+            })
+
+        return jsonify(song_data), 200
+
+    except SQLAlchemyError as e:
+        # Handle SQLAlchemy errors (e.g., database connection issues)
+        db.session.rollback()
+        return jsonify({'message': f'Failed to fetch songs for playlist: {str(e)}'}), 500
+
+    except Exception as e:
+        # Handle generic exceptions
+        return jsonify({'message': f'Error fetching songs for playlist: {str(e)}'}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -11,7 +11,6 @@
       </div>
     </header>
 
-    <br>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -33,7 +32,7 @@
               v-for="playlist in unique_playlists"
               :key="playlist"
               class="playlist-box"
-              @click="displayedSongs(playlist)"
+              @click="displayPlaylist(playlist)"
             >
               {{ playlist }}
             </button>
@@ -41,6 +40,7 @@
         </div>
 
         <div class="table-container">
+          <div v-if="displayedSongs.length > 0" class="table-container">
           <div class="table-heading">Create New Playlist</div>
           <table>
             <thead>
@@ -68,6 +68,7 @@
         </div>
       </div>
     </div>
+    </div>
 
     <br>
 
@@ -94,10 +95,11 @@ export default {
   data() {
     return {
       user_id: localStorage.getItem('userName'),
-      unique_playlists: ['Playlist 1', 'Playlist 2', 'Playlist 3'], // Example playlists
+      unique_playlists: [],// Example playlists
       newPlaylistName: '', // Input field for new playlist name
       displayedSongs: [], // Filtered songs to display
       isModalVisible: false,
+      selectedPlaylist: '',
       modalSongs: [], // Songs for modal (not used in current implementation)
       songs: [] // This will be populated with songs data from backend
     };
@@ -113,7 +115,30 @@ export default {
   },
 
   methods: {
-
+    async fetchPlaylists() {
+      try {
+        const response = await fetch('/api/playlists'); // Fetch playlists from your API endpoint
+        const data = await response.json();
+        this.unique_playlists = data; // Update unique_playlists with fetched playlist names
+      } catch (error) {
+        console.error('Failed to fetch playlists', error);
+      }
+    },
+    
+    async displayPlaylist(playlistName) {
+      try {
+        const response = await fetch(`/api/playlists/${playlistName}/songs`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch songs for the playlist');
+        }
+        const songs = await response.json();
+        this.displayedSongs = songs; // Update displayedSongs with fetched songs
+        this.selectedPlaylist = playlistName; // Update selectedPlaylist name
+      } catch (error) {
+        console.error('Error fetching songs for playlist:', error);
+        // Optionally show an error message to the user
+      }
+    },
     async handleLogin() {
       try {
         const response = await fetch('/api/login', {
@@ -212,6 +237,7 @@ export default {
   mounted() {
     // Fetch songs when component is mounted
     this.fetchSongs();
+    this.fetchPlaylists();
   }
 };
 </script>
