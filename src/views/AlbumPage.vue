@@ -18,7 +18,7 @@
         <div class="user-section">
           <img class="user-photo" src="@/assets/creator2.jpg" alt="User Photo">
           <div class="user-details">
-            <p class="user-name">Creator {{ user_id }}</p>
+            <p class="user-name">{{ userName }}</p>
           </div>
         </div>
       </div>
@@ -89,10 +89,11 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
-      user_id: '123', // Example user ID
+      userName: localStorage.getItem('userName') || 'John Doe',
       unique_albums: ['Album 1', 'Album 2', 'Album 3'], // Example unique albums
       songs: [], // Populate with actual data or fetch from API
       newAlbumName: '',
@@ -101,6 +102,16 @@ export default {
     };
   },
   methods: {
+    fetchSongs() {
+      axios.get('/api/songs')
+        .then(response => {
+          // Filter songs based on the logged-in user's name
+          this.songs = response.data.filter(song => song.creator_name === this.userName);
+        })
+        .catch(error => {
+          console.error('Error fetching songs:', error);
+        });
+    },
     closeModal() {
       this.isModalVisible = false;
     },
@@ -113,6 +124,10 @@ export default {
       // Example redirection to home
       this.$router.push('/creator');
     }
+  },
+  mounted() {
+    // Fetch songs when the component is mounted
+    this.fetchSongs();
   }
 };
 </script>
