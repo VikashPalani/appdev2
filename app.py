@@ -109,41 +109,6 @@ def get_songs():
         })
     return jsonify(song_data)
 
-# @app.route('/api/playlists', methods=['GET'])
-# def get_playlists():
-#     playlists = Playlist.query.all()
-#     grouped_playlists = defaultdict(list)
-    
-#     for playlist in playlists:
-#         playlist_info = {
-#             'song_name': playlist.song_name,
-#             'creator_name': playlist.creator_name
-#         }
-#         grouped_playlists[playlist.playlistname].append(playlist_info)
-    
-#     # Convert defaultdict to list of dictionaries
-#     playlist_data = [{'playlist_name': key, 'songs': value} for key, value in grouped_playlists.items()]
-    
-#     return jsonify(playlists=playlist_data)
-
-
-
-# @app.route('/api/playlists', methods=['GET'])
-# def get_playlists():
-#     playlists = Playlist.query.all()
-#     playlist_list = []
-#     for playlist in playlists:
-#         playlist_data = {
-#             'playlistid': playlist.playlistid,
-#             'userid': playlist.userid,
-#             'playlistname': playlist.playlistname,
-#             'song_name': playlist.song_name,
-#             'creator_name': playlist.creator_name
-#         }
-#         playlist_list.append(playlist_data)
-    
-#     return jsonify(playlists=playlist_list)
-
 # Route to add songs to playlist
 @app.route('/api/add_to_playlist', methods=['POST'])
 def add_to_playlist():
@@ -425,25 +390,28 @@ def get_unique_playlists():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Route to fetch songs for a specific playlist
+
 @app.route('/api/playlists/<playlist_name>/songs', methods=['GET'])
 def get_songs_by_playlist(playlist_name):
     try:
-        # Query the Playlist table to retrieve songs by playlist name
+        # Get the user_id from the request (assuming it's passed in the query string)
+        user_id = request.args.get('userId')
+
+        # Query the Playlist table to retrieve the specific playlist by name and user_id
         playlist = Playlist.query.filter_by(playlistname=playlist_name).first()
 
         if not playlist:
-            return jsonify({'message': 'Playlist not found'}), 404
+            return jsonify({'message': 'Playlist not found for the current user'}), 404
 
         # Retrieve the songs (song_name and creator_name) associated with the playlist
-        songs = Song.query.filter_by(playlistname=playlist_name).all()
+        playlists = Playlist.query.filter_by(playlistname=playlist_name).all()
 
         # Serialize song data into JSON format
         song_data = []
-        for song in songs:
+        for playlist in playlists:
             song_data.append({
-                'song_name': song.song_name,
-                'creator_name': song.creator_name
+                'song_name': playlist.song_name,
+                'creator_name': playlist.creator_name
                 # Add more song attributes as needed
             })
 
@@ -457,6 +425,7 @@ def get_songs_by_playlist(playlist_name):
     except Exception as e:
         # Handle generic exceptions
         return jsonify({'message': f'Error fetching songs for playlist: {str(e)}'}), 500
+
 
 
 if __name__ == "__main__":

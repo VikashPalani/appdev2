@@ -41,6 +41,32 @@
 
         <div class="table-container">
           <div v-if="displayedSongs.length > 0" class="table-container">
+            <div class="table-heading">Songs in Playlist: {{ selectedPlaylist }}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>S.No</th>
+                  <th>Song Name</th>
+                  <th>Creator Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(song, index) in displayedSongs" :key="song.song_id">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ song.song_name }}</td>
+                  <td>{{ song.creator_name }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div v-else>
+            <!-- Display message when no songs are available -->
+            <p>No songs available for the selected playlist.</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div v-if="displayedSongs.length > 0" class="table-container">
           <div class="table-heading">Create New Playlist</div>
           <table>
             <thead>
@@ -126,19 +152,19 @@ export default {
     },
     
     async displayPlaylist(playlistName) {
-      try {
-        const response = await fetch(`/api/playlists/${playlistName}/songs`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch songs for the playlist');
-        }
-        const songs = await response.json();
-        this.displayedSongs = songs; // Update displayedSongs with fetched songs
-        this.selectedPlaylist = playlistName; // Update selectedPlaylist name
-      } catch (error) {
-        console.error('Error fetching songs for playlist:', error);
-        // Optionally show an error message to the user
+    try {
+      const response = await fetch(`/api/playlists/${playlistName}/songs`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch songs for the playlist');
       }
-    },
+      const songs = await response.json();
+      this.displayedSongs = songs; // Update displayedSongs with fetched songs
+      this.selectedPlaylist = playlistName; // Update selectedPlaylist name
+    } catch (error) {
+      console.error('Error fetching songs for playlist:', error);
+      // Optionally show an error message to the user
+    }
+  },
     async handleLogin() {
       try {
         const response = await fetch('/api/login', {
