@@ -152,6 +152,7 @@ def add_to_playlist():
 
     for song in songs:
         new_playlist = Playlist(
+            id = 3,
             playlistname=playlist_name,
             song_name=song['song_name'],
             creator_name=song['creator_name']
