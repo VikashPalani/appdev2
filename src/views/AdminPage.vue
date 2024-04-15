@@ -9,6 +9,7 @@
         <h1>ADMIN DASHBOARD</h1>
       </div>
       <div class="right-header">
+        <button @click="navigateTo('/song')">Songs List</button>
         <button @click="logout">Log out</button>
       </div>
     </header>
@@ -133,6 +134,9 @@ export default {
         colors.push(randomColor);
       }
       return colors;
+    },
+    navigateTo(path) {
+        this.$router.push(path);
     },
     logout() {
       this.$router.push('/');

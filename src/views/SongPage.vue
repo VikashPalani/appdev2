@@ -47,7 +47,7 @@
                     <option value="whitelist">Whitelist</option>
                   </select>
                   <!-- <button class="flag-song-button" @click="flagSong(song.song_id)">Flag Song</button> -->
-                  <button class="flag-song-button">Flag Song</button>
+                  <button class="flag-song-button" @click="confirmFlag(song.song_id)">Flag Song</button>
                 </div>
               </td>
               <td>
@@ -148,6 +148,9 @@ export default {
           alert('Failed to delete song');
         }
       }
+    },
+    async confirmFlag(){
+      alert('Flagged song successfully');
     },
     closeModal() {
       this.isModalVisible = false;

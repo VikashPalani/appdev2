@@ -63,6 +63,8 @@ export default {
             this.$router.push('/user');
           } else if (data.role === 'creator') {
             this.$router.push('/creator');
+          } else if (data.role === 'admin') {
+            this.$router.push('/admin');
           } else {
             this.error = 'Invalid user role.';
           }
