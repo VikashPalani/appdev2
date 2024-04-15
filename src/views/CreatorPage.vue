@@ -1,115 +1,119 @@
 <template>
-  <div class="creator-page">
-    <!-- Header -->
-    <header>
-      <div class="logo">
-        <img src="@/assets/harmonix.png" alt="Website Logo">
-      </div>
-      <div class="header-buttons">
-        <button @click="redirectToAlbumPage">My Albums</button>
-        <button @click="redirectToLogout">Logout</button>
-      </div>
-    </header>
+  <div id="element-to-convert">
+    <div class="creator-page">
+      <!-- Header -->
+      <header>
+        <div class="logo">
+          <img src="@/assets/harmonix.png" alt="Website Logo">
+        </div>
+        <div class="header-buttons">
+          <button @click="downloadAsPdf">Download Report</button>
+          <button @click="redirectToAlbumPage">My Albums</button>
+          <button @click="redirectToLogout">Logout</button>
+        </div>
+      </header>
 
-    <!-- User Info Container -->
-    <div class="user-info-container">
-      <div class="user-info">
-        <img class="user-image" src="@/assets/creator2.jpg" alt="Creator Photo">
-        <p>{{ userName }}</p>
-      </div>
-      <div class="stats-container">
-        <div class="stats-box">
-          <p>Total Songs</p>
-          <p>{{ songs.length }}</p>
+      <!-- User Info Container -->
+      <div class="user-info-container">
+        <div class="user-info">
+          <img class="user-image" src="@/assets/creator2.jpg" alt="Creator Photo">
+          <p>{{ userName }}</p>
         </div>
-        <div class="stats-box">
-          <p>Average Rating</p>
-          <p>{{ averageRating }}</p>
-        </div>
-        <div class="stats-box">
-          <p>Genre</p>
-          <p>{{ firstGenre }}</p>
+        <div class="stats-container">
+          <div class="stats-box">
+            <p>Total Songs</p>
+            <p>{{ songs.length }}</p>
+          </div>
+          <div class="stats-box">
+            <p>Average Rating</p>
+            <p>{{ averageRating }}</p>
+          </div>
+          <div class="stats-box">
+            <p>Genre</p>
+            <p>{{ firstGenre }}</p>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Section - Your Uploads -->
-    <section>
-      <div class="uploads-header">
-        <h2>Your Uploads</h2>
-        <button class="add-song-button" @click="openAddSongModal">Add New Song</button>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Song Name</th>
-            <th>Lyrics</th>
-            <th>Edit Lyrics</th>
-            <th>Delete Song</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="song in songs" :key="song.song_id">
-            <td>{{ song.song_name }}</td>
-            <td>
-              <button class="view-lyrics-button" @click="showLyrics(song)">View Lyrics</button>
-            </td>
-            <td><button class="edit-button" @click="openEditLyricsModal(song.song_id, song.lyrics)">Edit</button></td>
-            <td><button class="delete-button" @click="confirmDelete(song.song_id)">Delete</button></td>
-          </tr>
-        </tbody>
-      </table>
       
-    </section>
+      <!-- Section - Your Uploads -->
+      <section>
+        <div class="uploads-header">
+          <h2>Your Uploads</h2>
+          <button class="add-song-button" @click="openAddSongModal">Add New Song</button>
+        </div>
 
-    <!-- Footer -->
-    <footer>
-      <p>&copy; Harmonix. All rights reserved.</p>
-      <p>Contact: contact@harmonix.com</p>
-    </footer>
+        <table>
+          <thead>
+            <tr>
+              <th>Song Name</th>
+              <th>Lyrics</th>
+              <th>Edit Lyrics</th>
+              <th>Delete Song</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="song in songs" :key="song.song_id">
+              <td>{{ song.song_name }}</td>
+              <td>
+                <button class="view-lyrics-button" @click="showLyrics(song)">View Lyrics</button>
+              </td>
+              <td><button class="edit-button" @click="openEditLyricsModal(song.song_id, song.lyrics)">Edit</button></td>
+              <td><button class="delete-button" @click="confirmDelete(song.song_id)">Delete</button></td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </section>
 
-    <!-- Modal for Lyrics -->
-    <div class="modal" v-if="isModalVisible">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h3 v-if="selectedSong">{{ selectedSong.song_name }}</h3>
-        <pre v-if="selectedSong && selectedSong.lyrics">{{ selectedSong.lyrics }}</pre>
+      <!-- Footer -->
+      <footer>
+        <p>&copy; Harmonix. All rights reserved.</p>
+        <p>Contact: contact@harmonix.com</p>
+      </footer>
+
+      <!-- Modal for Lyrics -->
+      <div class="modal" v-if="isModalVisible">
+        <div class="modal-content">
+          <span class="close" @click="closeModal">&times;</span>
+          <h3 v-if="selectedSong">{{ selectedSong.song_name }}</h3>
+          <pre v-if="selectedSong && selectedSong.lyrics">{{ selectedSong.lyrics }}</pre>
+        </div>
       </div>
-    </div>
 
-    <!-- Edit Lyrics Modal -->
-    <div class="modal" v-if="isEditModalOpen">
-      <div class="modal-content">
-        <span class="close" @click="closeEditModal">&times;</span>
-        <h3>Edit Lyrics{{ selectedSong.song_name }}</h3>
-        <textarea v-model="selectedSong.lyrics" placeholder="Enter updated lyrics" required></textarea>
-        <button @click="saveEditedLyrics">Save</button>
-        <button @click="closeEditModal">Cancel</button>
+      <!-- Edit Lyrics Modal -->
+      <div class="modal" v-if="isEditModalOpen">
+        <div class="modal-content">
+          <span class="close" @click="closeEditModal">&times;</span>
+          <h3>Edit Lyrics{{ selectedSong.song_name }}</h3>
+          <textarea v-model="selectedSong.lyrics" placeholder="Enter updated lyrics" required></textarea>
+          <button @click="saveEditedLyrics">Save</button>
+          <button @click="closeEditModal">Cancel</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Add Song Modal -->
-    <div class="add-song-modal" v-show="isAddSongModalOpen">
-      <h2>Add New Song</h2>
-      <form @submit.prevent="addNewSong">
-        <input type="text" v-model="newSong.genre" placeholder="Genre" required>
-        <input type="text" v-model="newSong.song_name" placeholder="Song Name" required>
-        <input type="text" v-model="newSong.duration" placeholder="Duration" required>
-        <textarea v-model="newSong.lyrics" placeholder="Lyrics" required></textarea>
-        <input type="text" v-model="newSong.creator_name" placeholder="Creator Name" required>
-        <input type="text" v-model="newSong.song_path" placeholder="Song Path" required>
-        <input type="text" v-model="newSong.image_path" placeholder="Image Path" required>
-        <input type="number" v-model="newSong.avg_rating" placeholder="Average Rating" required>
-        <button type="submit">Add Song</button>
-        <button @click="closeAddSongModal">Cancel</button>
-      </form>
+      <!-- Add Song Modal -->
+      <div class="add-song-modal" v-show="isAddSongModalOpen">
+        <h2>Add New Song</h2>
+        <form @submit.prevent="addNewSong">
+          <input type="text" v-model="newSong.genre" placeholder="Genre" required>
+          <input type="text" v-model="newSong.song_name" placeholder="Song Name" required>
+          <input type="text" v-model="newSong.duration" placeholder="Duration" required>
+          <textarea v-model="newSong.lyrics" placeholder="Lyrics" required></textarea>
+          <input type="text" v-model="newSong.creator_name" placeholder="Creator Name" required>
+          <input type="text" v-model="newSong.song_path" placeholder="Song Path" required>
+          <input type="text" v-model="newSong.image_path" placeholder="Image Path" required>
+          <input type="number" v-model="newSong.avg_rating" placeholder="Average Rating" required>
+          <button type="submit">Add Song</button>
+          <button @click="closeAddSongModal">Cancel</button>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import html2pdf from 'html2pdf.js';
 
 export default {
   data() {
@@ -135,6 +139,13 @@ export default {
     };
   },
   methods: {
+
+    downloadAsPdf(){
+      html2pdf(document.getElementById('element-to-convert'),{
+        margin:1,
+        filename: 'MonthlyReport.pdf'
+      });
+    },
     fetchSongs() {
       axios.get('/api/songs')
         .then(response => {
