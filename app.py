@@ -61,16 +61,22 @@ class Album(db.Model):
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
-    data = request.get_json()
-    new_user = User(
-        role=data.get('role'),
-        name=data.get('name'),
-        email=data.get('email'),
-        password=data.get('password')
-    )
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User signed up successfully'}), 201
+    try:
+        data = request.get_json()
+        new_user = User(
+            role=data.get('role'),
+            name=data.get('name'),
+            email=data.get('email'),
+            password=data.get('password')
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'User signed up successfully'}), 201
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'message': f'Failed to sign up: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'message': f'Failed to sign up: {str(e)}'}), 500
 
 
 @app.route('/api/login', methods=['POST'])
