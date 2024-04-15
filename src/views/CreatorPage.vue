@@ -1,7 +1,6 @@
 <template>
   <div id="element-to-convert">
     <div class="creator-page">
-      <!-- Header -->
       <header>
         <div class="logo">
           <img src="@/assets/harmonix.png" alt="Website Logo">
@@ -13,7 +12,6 @@
         </div>
       </header>
 
-      <!-- User Info Container -->
       <div class="user-info-container">
         <div class="user-info">
           <img class="user-image" src="@/assets/creator2.jpg" alt="Creator Photo">
@@ -34,8 +32,7 @@
           </div>
         </div>
       </div>
-      
-      <!-- Section - Your Uploads -->
+
       <section>
         <div class="uploads-header">
           <h2>Your Uploads</h2>
@@ -65,13 +62,11 @@
         
       </section>
 
-      <!-- Footer -->
       <footer>
         <p>&copy; Harmonix. All rights reserved.</p>
         <p>Contact: contact@harmonix.com</p>
       </footer>
 
-      <!-- Modal for Lyrics -->
       <div class="modal" v-if="isModalVisible">
         <div class="modal-content">
           <span class="close" @click="closeModal">&times;</span>
@@ -80,7 +75,6 @@
         </div>
       </div>
 
-      <!-- Edit Lyrics Modal -->
       <div class="modal" v-if="isEditModalOpen">
         <div class="modal-content">
           <span class="close" @click="closeEditModal">&times;</span>
@@ -91,7 +85,6 @@
         </div>
       </div>
 
-      <!-- Add Song Modal -->
       <div class="add-song-modal" v-show="isAddSongModalOpen">
         <h2>Add New Song</h2>
         <form @submit.prevent="addNewSong">
@@ -194,7 +187,7 @@ export default {
       axios.put(`/api/songs/${song_id}`, { lyrics })
         .then(() => {
           this.closeEditModal();
-          this.fetchSongs(); // Refresh songs after update
+          this.fetchSongs();
           alert('Lyrics updated successfully');
         })
         .catch(error => {
@@ -263,7 +256,6 @@ export default {
 };
 </script>
 <style scoped>
-/* CSS Styles */
 
 .creator-page {
   font-family: Arial, sans-serif;

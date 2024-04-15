@@ -1,6 +1,5 @@
 <template>
   <div class="playlist-page">
-    <!-- Header -->
     <header class="header">
       <div class="left-header">
         <img class="logo" src="@/assets/harmonix.png" alt="Logo">
@@ -12,9 +11,7 @@
     </header>
 
 
-    <!-- Main Content -->
     <div class="main-content">
-      <!-- Left Section -->
       <div class="left-section">
         <div class="user-section">
           <img class="user-photo" src="@/assets/creator1.jpg" alt="User Photo">
@@ -24,7 +21,6 @@
         </div>
       </div>
 
-      <!-- Right Section -->
       <div class="right-section">
         <div class="playlist-section">
           <div class="playlist-container">
@@ -60,7 +56,6 @@
             </table>
           </div>
           <div v-else>
-            <!-- Display message when no songs are available -->
             <p>No songs available for the selected playlist.</p>
           </div>
         </div>
@@ -98,13 +93,11 @@
 
     <br>
 
-    <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
     </footer>
 
-    <!-- Modal -->
     <div class="modal" v-if="isModalVisible">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
@@ -121,18 +114,17 @@ export default {
   data() {
     return {
       user_id: localStorage.getItem('userName'),
-      unique_playlists: [],// Example playlists
-      newPlaylistName: '', // Input field for new playlist name
-      displayedSongs: [], // Filtered songs to display
+      unique_playlists: [],
+      newPlaylistName: '',
+      displayedSongs: [], 
       isModalVisible: false,
       selectedPlaylist: '',
-      modalSongs: [], // Songs for modal (not used in current implementation)
-      songs: [] // This will be populated with songs data from backend
+      modalSongs: [],
+      songs: []
     };
   },
 
   computed: {
-    // Filter songs based on search query
     filteredSongs() {
       return this.songs.filter(song =>
         song.song_name.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -143,9 +135,9 @@ export default {
   methods: {
     async fetchPlaylists() {
       try {
-        const response = await fetch('/api/playlists'); // Fetch playlists from your API endpoint
+        const response = await fetch('/api/playlists');
         const data = await response.json();
-        this.unique_playlists = data; // Update unique_playlists with fetched playlist names
+        this.unique_playlists = data;
       } catch (error) {
         console.error('Failed to fetch playlists', error);
       }
@@ -158,11 +150,10 @@ export default {
         throw new Error('Failed to fetch songs for the playlist');
       }
       const songs = await response.json();
-      this.displayedSongs = songs; // Update displayedSongs with fetched songs
-      this.selectedPlaylist = playlistName; // Update selectedPlaylist name
+      this.displayedSongs = songs;
+      this.selectedPlaylist = playlistName;
     } catch (error) {
       console.error('Error fetching songs for playlist:', error);
-      // Optionally show an error message to the user
     }
   },
     async handleLogin() {
@@ -181,13 +172,11 @@ export default {
         const data = await response.json();
         
         if (response.ok) {
-          // Login successful
           console.log('Login successful.');
           console.log('User ID:', data.id);
           console.log('User Name:', data.name);
           console.log('User Role:', data.role);
         } else {
-          // Login failed
           this.error = data.message || 'Login failed. Please try again.';
         }
       } 
@@ -197,7 +186,6 @@ export default {
       }
     },
 
-    // Fetch songs from backend
     async fetchSongs() {
       try {
         const response = await fetch('/api/songs');
@@ -205,13 +193,12 @@ export default {
           throw new Error('Failed to fetch songs');
         }
         this.songs = await response.json();
-        this.displayedSongs = this.songs; // Initialize displayedSongs with all songs
+        this.displayedSongs = this.songs;
       } catch (error) {
         console.error('Error fetching songs:', error);
       }
     },
 
-    // Add song to playlist
     async addToPlaylist(songName, creatorName) {
       try {
         const playlistName = this.newPlaylistName.trim();
@@ -242,26 +229,23 @@ export default {
         }
 
         alert(`"${songName}" by ${creatorName} added to playlist: ${playlistName}`);
-        this.newPlaylistName = ''; // Clear input field after adding to playlist
+        this.newPlaylistName = '';
       } catch (error) {
         console.error('Error adding song to playlist:', error);
         alert('Failed to add song to playlist. Please try again.');
       }
     },
 
-    // Redirect to home (replace with appropriate route)
     redirectToHome() {
       this.$router.push('/user');
     },
 
-    // Close modal (not used in current implementation)
     closeModal() {
       this.isModalVisible = false;
     }
   },
 
   mounted() {
-    // Fetch songs when component is mounted
     this.fetchSongs();
     this.fetchPlaylists();
   }
@@ -270,7 +254,7 @@ export default {
 
 
 <style scoped>
-/* Add your scoped styles here */
+
 .playlist-page {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -305,7 +289,7 @@ export default {
 
 .left-section {
   flex: 1;
-  width: 20%; /* Adjusted width for left section */
+  width: 20%;
   background-color: #dadada;
   margin-right: 10px;
 }
@@ -334,7 +318,7 @@ export default {
 }
 
 .right-section {
-  flex: 7; /* Adjusted width for right section */
+  flex: 7;
 }
 
 .playlist-section {

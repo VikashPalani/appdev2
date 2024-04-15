@@ -1,39 +1,3 @@
-<!--
-<template>
-    <div>
-      <h1>{{ message }}</h1>
-      <button @click="fetchData">Fetch Data</button>
-      <div v-if="data">
-        <p>{{ data }}</p>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        message: 'Hello from Vue!',
-        data: null
-      };
-    },
-    methods: {
-      async fetchData() {
-        const response = await fetch('/api/data');
-        const jsonData = await response.json();
-        this.data = jsonData;
-      }
-    }
-  };
-  </script>
-  
-  <style scoped>
-  /* Styles specific to this component */
-  </style>
--->
-
-<!-- SamplePage.vue -->
-
 <template>
     <div>
       <h1>List of Songs</h1>
@@ -87,5 +51,3 @@
   <style scoped>
   /* Styles specific to this component */
   </style>
-  
-  

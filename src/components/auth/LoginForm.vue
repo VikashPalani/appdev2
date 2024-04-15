@@ -48,13 +48,12 @@ export default {
         const data = await response.json();
         
         if (response.ok) {
-          // Login successful
+
           console.log('Login successful.');
           console.log('User ID:', data.id);
           console.log('User Name:', data.name);
           console.log('User Role:', data.role);
 
-          // Store user data in localStorage
           localStorage.setItem('userId', data.id);
           localStorage.setItem('userName', data.name);
           localStorage.setItem('userRole', data.role);
@@ -69,7 +68,6 @@ export default {
             this.error = 'Invalid user role.';
           }
         } else {
-          // Login failed
           this.error = data.message || 'Login failed. Please try again.';
         }
       } catch (error) {
@@ -85,36 +83,36 @@ export default {
 <style scoped>
 
 
-/* Wrapper Background */
+
 .wrapper {
-  background-color: #333; /* Set wrapper background color to #333 */
-  height: 100vh; /* Ensure wrapper covers the full viewport height */
+  background-color: #333;
+  height: 100vh;
   display: flex;
-  flex-direction: column; /* Stack children vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-/* Title Styling */
+
 .title {
   font-size: 40px;
-  margin-bottom: 30px; /* Margin below the title */
-  color: #fff; /* Text color for the title */
+  margin-bottom: 30px;
+  color: #fff;
 }
 
 
 .login-box {
   background-color: #ffffff8e; 
   border-radius: 10px;
-  box-shadow: 0 0 10px #00000033; /* Subtle shadow effect */
+  box-shadow: 0 0 10px #00000033;
   padding: 40px;
-  width: 400px; /* Set width of the login box */
+  width: 400px;
 }
 
 h2 {
   text-align: center;
   margin-bottom: 30px;
-  color: #000; /* Set color for headings */
+  color: #000;
 }
 
 select,
@@ -128,24 +126,24 @@ button {
 }
 
 button {
-  background-color: #e35f21; /* Orange background color for buttons */
-  color: #fff; /* White text color for buttons */
+  background-color: #e35f21;
+  color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #9c4117; /* Darker orange color on button hover */
+  background-color: #9c4117;
 }
 
 a {
-  color: #e35f21; /* Orange color for links */
+  color: #e35f21;
   text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline; /* Underline links on hover */
+  text-decoration: underline;
 }
 
 .signup {

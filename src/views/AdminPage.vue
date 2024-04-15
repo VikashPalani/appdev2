@@ -1,6 +1,5 @@
 <template>
   <div class="wrapper">
-    <!-- Header Section -->
     <header class="header">
       <div class="left-header">
         <img class="logo" src="@/assets/harmonix.png" alt="Logo">
@@ -16,9 +15,7 @@
 
     <br>
 
-    <!-- Main Content Section -->
     <div class="main-content">
-      <!-- Left Content - Statistics Boxes -->
       <div class="left-content">
         <div class="box" v-for="(value, label) in statistics" :key="label">
           <div class="box-title">{{ label }}</div>
@@ -26,7 +23,6 @@
         </div>
       </div>
 
-      <!-- Right Content - Graphs -->
       <div class="right-content">
         <div class="graph-box" v-for="(graph, index) in graphs" :key="index">
           <div class="chart-container">
@@ -37,7 +33,6 @@
       </div>
     </div>
 
-    <!-- Footer Section -->
     <footer class="footer">
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
@@ -146,7 +141,7 @@ export default {
 </script>
 
 <style scoped>
-/* Add scoped CSS styles here */
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -200,7 +195,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-top: 20px; /* Adjust top margin */
+  margin-top: 20px;
 }
 
 .left-content {
@@ -233,7 +228,7 @@ button:hover {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  margin-top: 20px; /* Adjust top margin */
+  margin-top: 20px;
 }
 
 .graph-box {

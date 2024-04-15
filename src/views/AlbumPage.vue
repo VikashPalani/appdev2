@@ -1,6 +1,6 @@
 <template>
   <div class="playlist-page">
-    <!-- Header -->
+
     <header class="header">
       <div class="left-header">
         <img class="logo" src="@/assets/harmonix.png" alt="Logo">
@@ -11,9 +11,9 @@
       </div>
     </header>
 
-    <!-- Main Content -->
+
     <div class="main-content">
-      <!-- Left Section -->
+
       <div class="left-section">
         <div class="user-section">
           <img class="user-photo" src="@/assets/creator2.jpg" alt="User Photo">
@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <!-- Right Section -->
+
       <div class="right-section">
         <div class="playlist-section">
           <div class="playlist-container">
@@ -41,7 +41,7 @@
             </ul>
           </div>
 
-          <!-- Display Matching Albums Table -->
+
           <div v-if="matchingAlbums.length > 0">
             <h3>Matching Albums</h3>
             <table>
@@ -64,7 +64,7 @@
         </div>
       </div>
 
-        <!-- Songs Section (display songs of selected album) -->
+
         <div v-if="selectedAlbum" class="songs-section">
           <ul>
             <li v-for="song in songsInAlbum" :key="song.song_id">
@@ -105,13 +105,12 @@
     </div>
 
 
-    <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
     </footer>
 
-    <!-- Modal -->
+
     <div class="modal" v-if="isModalVisible">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
@@ -129,15 +128,15 @@ export default {
   data() {
     return {
       userName: localStorage.getItem('userName') || 'John Doe',
-      uniqueAlbums: [], // Example unique albums
-      songs: [], // Populate with actual data or fetch from API
+      uniqueAlbums: [], 
+      songs: [], 
       newAlbumName: '',
       isModalVisible: false,
       modalSongs: [],
-      albums: [], // Array to store real album data from API
-      selectedAlbum: null, // To keep track of the selected album
-      songsInAlbum: [], // Array to store songs of the selected album
-      matchingAlbums: [] // New property to store matching albums
+      albums: [], 
+      selectedAlbum: null, 
+      songsInAlbum: [], 
+      matchingAlbums: [] 
     };
   },
   methods: {
@@ -187,7 +186,6 @@ export default {
     fetchSongs() {
       axios.get('/api/songs')
         .then(response => {
-          // Filter songs based on the logged-in user's name
           this.songs = response.data.filter(song => song.creator_name === this.userName);
         })
         .catch(error => {
@@ -198,7 +196,6 @@ export default {
       this.isModalVisible = false;
     },
     redirectToHome() {
-      // Example redirection to home
       this.$router.push('/creator');
     },
     
@@ -216,10 +213,8 @@ export default {
 
       axios.post('/api/add_to_album', data)
         .then(response => {
-          // Check if the request was successful (status code 201)
           if (response.status === 201) {
             alert('Song added to album successfully!');
-            // Optionally, you can update the UI or perform additional actions after success
           } else {
             alert('Failed to add song to album. Please try again.');
           }
@@ -231,15 +226,13 @@ export default {
       },
   },
   mounted() {
-    // Fetch songs when the component is mounted
     this.fetchSongs();
-    this.fetchAlbums(); // Fetch albums when the component is mounted
+    this.fetchAlbums();
   }
 };
 </script>
 
 <style scoped>
-/* Add your scoped styles here */
 .playlist-page {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -278,7 +271,7 @@ button{
 
 .left-section {
   flex: 1;
-  width: 20%; /* Adjusted width for left section */
+  width: 20%;
   background-color: #dadada;
   margin-right: 10px;
 }
@@ -307,7 +300,7 @@ button{
 }
 
 .right-section {
-  flex: 7; /* Adjusted width for right section */
+  flex: 7;
 }
 
 .playlist-section {

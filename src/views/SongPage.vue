@@ -1,6 +1,5 @@
 <template>
   <div class="song-page">
-    <!-- Header -->
     <header>
       <div class="logo">
         <img src="@/assets/harmonix.png" alt="Website Logo">
@@ -10,7 +9,6 @@
       </div>
     </header>
 
-    <!-- Content -->
     <div class="content">
       <div class="search-bar-container">
         <h2>All Songs</h2>
@@ -20,10 +18,8 @@
         </form>
       </div>
 
-      <!-- Separator -->
       <div class="separator"></div>
 
-      <!-- Table Container -->
       <div class="table-container">
         <table>
           <thead>
@@ -46,7 +42,6 @@
                     <option value="blacklist">Blacklist</option>
                     <option value="whitelist">Whitelist</option>
                   </select>
-                  <!-- <button class="flag-song-button" @click="flagSong(song.song_id)">Flag Song</button> -->
                   <button class="flag-song-button" @click="confirmFlag(song.song_id)">Flag Song</button>
                 </div>
               </td>
@@ -61,13 +56,11 @@
 
     <br><br>
 
-    <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
     </footer>
 
-    <!-- Modal for Lyrics -->
     <div class="modal" v-if="isModalVisible">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
@@ -85,7 +78,7 @@ export default {
       searchQuery: '',
       isModalVisible: false,
       selectedSong: null,
-      songs: [] // This will be populated with songs data from backend
+      songs: []
     };
   },
   computed: {
@@ -115,13 +108,11 @@ export default {
         }
         const lyricsData = await response.json();
 
-        // Set the selected song with lyrics
         this.selectedSong = {
           ...song,
-          lyrics: lyricsData.lyrics // Assuming the response contains { lyrics: '...' }
+          lyrics: lyricsData.lyrics
         };
 
-        // Display the modal
         this.isModalVisible = true;
       } catch (error) {
         console.error('Error showing lyrics:', error);
@@ -139,7 +130,6 @@ export default {
             throw new Error('Failed to delete song');
           }
 
-          // If deletion is successful, fetch songs again to update the list
           this.fetchSongs();
 
           alert('Song deleted successfully');
@@ -157,16 +147,13 @@ export default {
       this.selectedSong = null;
     },
     redirectToAdmin() {
-      // Redirect to admin dashboard (replace with your route)
       this.$router.push('/admin');
     },
     searchSongs() {
-      // Implement search logic here (e.g., filter songs in displayedSongs)
       console.log('Searching songs with query:', this.searchQuery);
     }
   },
   mounted() {
-    // Fetch songs when component is mounted
     this.fetchSongs();
   }
 };
@@ -174,7 +161,6 @@ export default {
 
 
 <style scoped>
-/* CSS Styles */
 
 body {
   font-family: Arial, sans-serif;
@@ -299,12 +285,12 @@ th {
 }
 
 .flag-song-container select {
-  width: 300px; /* Set the width of the select element */
-  padding: 8px; /* Add padding for better appearance */
+  width: 300px;
+  padding: 8px;
   margin-left: 200px;
   margin-right: 10px;
-  border: 1px solid #ccc; /* Add border for visibility */
-  border-radius: 5px; /* Add border radius for rounded corners */
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .flag-song-container button {

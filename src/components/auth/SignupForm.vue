@@ -51,7 +51,7 @@ export default {
         });
         const data = await response.json();
         if (response.ok) {
-          this.$router.push('/login'); // Redirect to /user upon successful signup
+          this.$router.push('/login');
         } else {
           this.error = data.message;
         }
@@ -66,24 +66,24 @@ export default {
 
 <style scoped>
 .wrapper {
-  background-color: #333; /* Set wrapper background color to #333 */
-  height: 100vh; /* Ensure wrapper covers the full viewport height */
+  background-color: #333;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; /* Stack child elements vertically */
+  flex-direction: column;
 }
 
 .title {
   font-size: 40px;
   margin-bottom: 30px;
-  color: #fff; /* Text color for the title */
+  color: #fff; 
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center child elements horizontally */
+  align-items: center; 
   width: 500px;
 }
 
@@ -92,14 +92,14 @@ export default {
   border-radius: 10px;
   box-shadow: 0 0 10px #00000033;
   padding: 40px;
-  width: 100%; /* Ensure signup box fills container width */
-  max-width: 400px; /* Limit maximum width of the signup box */
+  width: 100%;
+  max-width: 400px;
 }
 
 h2 {
   text-align: center;
   margin-bottom: 30px;
-  color: #000; /* Text color for headings */
+  color: #000;
 }
 
 select,

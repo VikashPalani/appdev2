@@ -27,7 +27,6 @@
         <p v-if="query">Search results for "{{ query }}":</p>
         <div v-for="song in songs" :key="song.song_id" class="item">
 
-          <!-- Song Details -->
           <img :src="require(`@/assets/${song.image_path}`)" alt="Song Image">
 
           <div class="lyrics-container">
@@ -47,7 +46,6 @@
               <audio controls>
 
               <source :src="require(`@/assets/${song.song_path}`)" type="audio/mpeg">
-              <!-- <source :src="`/${song.song_path}`" type="audio/mpeg"> -->
 
               </audio>
               <p>Rate:</p>
@@ -62,11 +60,9 @@
 
     <hr><hr>
 
-    <!-- Creators Section -->
     <div class="creators-section">
       <h2>CREATORS</h2>
       <div class="creators-list">
-        <!-- Creator Images -->
         <div class="creator-item">
           <img src="@/assets/alanwalker.jpg" alt="alanwalker">
         </div>
@@ -87,12 +83,11 @@
         </div>
       </div>
       <div class="creators-names">
-        <!-- Creator Names -->
+
         <div v-for="(creator, index) in creators" :key="index" class="creator-name">{{ creator.name }}</div>
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>
       <p>&copy; Harmonix. All rights reserved.</p>
       <p>Contact: contact@harmonix.com</p>
@@ -121,18 +116,15 @@ export default {
   },
 
   mounted() {
-    // Fetch songs data when the component is mounted
     this.fetchSongs();
   },
   methods: {
 
     fetchSongs() {
-    // Make API call to fetch songs data from backend
     fetch('/api/songs')
     .then(response => response.json())
     .then(data => {
       this.songs = data;
-      // Print the value of song.image_path for each song
       this.songs.forEach(song => {
         console.log(song.image_path);
       });
@@ -142,8 +134,6 @@ export default {
     });
     },
 
-
-    // Perform search based on the search query
     search() {
       this.query = this.searchQuery;
       fetch(`/api/search?query=${this.searchQuery}`)
@@ -158,17 +148,13 @@ export default {
 
     signOut() {
       this.$router.push('/');
-      // Implement sign-out functionality
     },
 
     goToPlaylists() {
       this.$router.push('/playlist');
-      // Redirect to user's playlists page
     },
 
     rateSong(songId, rating) {
-      // Rate the song
-      // Make API call to rate the song
       fetch(`/api/songs/${songId}/rate`, {
         method: 'POST',
         headers: {
@@ -180,7 +166,6 @@ export default {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        // Update the rating locally
         const songIndex = this.songs.findIndex(song => song.song_id === songId);
         if (songIndex !== -1) {
           this.songs[songIndex].avg_rating = rating;
@@ -258,7 +243,6 @@ button:hover {
   padding: 5px;
 }
 
-/* List Styles */
 .list {
   display: flex;
   flex-wrap: wrap;
@@ -364,8 +348,6 @@ button:hover {
   color: #FFD700;
 }
 
-/* Creators Section Styles */
-
 .creators-section h2 {
   color: #000;
   font-size: 24px;
@@ -418,7 +400,6 @@ button:hover {
   margin: 10px 0;
 }
 
-/* Footer Styles */
 footer {
   background-color: #333;
   color: #fff;

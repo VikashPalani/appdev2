@@ -58,6 +58,7 @@ class Album(db.Model):
     genre = db.Column(db.Text, nullable=False)
     creator_name = db.Column(db.Text, nullable=False)
 
+
 @app.route('/api/signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -115,7 +116,7 @@ def add_to_playlist():
     data = request.get_json()
 
     playlist_name = data.get('playlist_name')
-    songs = data.get('songs')  # List of songs to add to the playlist
+    songs = data.get('songs')
 
     for song in songs:
         new_playlist = Playlist(
@@ -137,25 +138,22 @@ def add_to_album():
     creator_name = data.get('creator_name')
     album_name = data.get('album_name')
 
-    # Validate required fields
     if not (song_name and creator_name and album_name):
         return jsonify({'message': 'Missing required fields'}), 400
 
     try:
-        # Check if album exists or create a new one if needed
         album = Album.query.filter_by(albumname=album_name).first()
         if not album:
-            album = Album(albumname=album_name)  # Create new album
+            album = Album(albumname=album_name)
             db.session.add(album)
             db.session.commit()
 
-        # Add the song to the album
         new_album_song = Album(
             id=7,
             albumname=album_name,
             song_name=song_name,
             creator_name=creator_name,
-            genre='Pop'  # Update with appropriate genre if needed
+            genre='Pop' 
         )
         db.session.add(new_album_song)
         db.session.commit()
@@ -163,13 +161,11 @@ def add_to_album():
         return jsonify({'message': 'Song added to album successfully'}), 201
 
     except SQLAlchemyError as e:
-        # Handle SQLAlchemy errors (e.g., database connection issues, integrity errors)
-        db.session.rollback()  # Rollback any changes made before the exception
+        db.session.rollback()
         print(f"SQLAlchemy Error: {str(e)}")
         return jsonify({'message': 'Failed to add song to album. Please try again.'}), 500
 
     except Exception as e:
-        # Handle generic exceptions
         print(f"Error adding song to album: {str(e)}")
         return jsonify({'message': 'Failed to add song to album. Please try again.'}), 500
     
@@ -185,7 +181,6 @@ def get_albums():
             'album_name': album.albumname,
             'genre': album.genre,
             'creator_name': album.creator_name
-            # You can add more fields as needed
         })
     return jsonify(album_data)
 
@@ -205,7 +200,6 @@ def get_songs_in_album(album_id):
             'song_path': song.song_path,
             'image_path': song.image_path,
             'avg_rating': song.avg_rating
-            # Add more song attributes as needed
         })
     return jsonify(song_data)
 
@@ -222,7 +216,6 @@ def get_matching_albums(album_name):
                 'album_name': album.albumname,
                 'song_name': album.song_name,
                 'creator_name': album.creator_name
-                # Add more album attributes as needed
             })
         return jsonify(album_data), 200
     except Exception as e:
@@ -235,7 +228,6 @@ def search():
     query = request.args.get('query', '').strip().lower()
 
     if query:
-        # Perform case-insensitive search without using func.lower()
         search_results = Song.query.filter(
             db.func.lower(Song.song_name).contains(query) |
             db.func.lower(Song.genre).contains(query) |
@@ -243,7 +235,6 @@ def search():
             db.cast(Song.avg_rating, db.String).contains(query)
         ).all()
 
-        # Serialize the search results into JSON format
         serialized_results = [{
             'song_id': song.song_id,
             'genre': song.genre,
@@ -258,7 +249,6 @@ def search():
 
         return jsonify(serialized_results)
     else:
-        # If no query provided, return an empty list (or all songs)
         songs = Song.query.all()
         serialized_songs = [{
             'song_id': song.song_id,
@@ -394,36 +384,28 @@ def get_unique_playlists():
 @app.route('/api/playlists/<playlist_name>/songs', methods=['GET'])
 def get_songs_by_playlist(playlist_name):
     try:
-        # Get the user_id from the request (assuming it's passed in the query string)
         user_id = request.args.get('userId')
-
-        # Query the Playlist table to retrieve the specific playlist by name and user_id
         playlist = Playlist.query.filter_by(playlistname=playlist_name).first()
 
         if not playlist:
             return jsonify({'message': 'Playlist not found for the current user'}), 404
 
-        # Retrieve the songs (song_name and creator_name) associated with the playlist
         playlists = Playlist.query.filter_by(playlistname=playlist_name).all()
 
-        # Serialize song data into JSON format
         song_data = []
         for playlist in playlists:
             song_data.append({
                 'song_name': playlist.song_name,
                 'creator_name': playlist.creator_name
-                # Add more song attributes as needed
             })
 
         return jsonify(song_data), 200
 
     except SQLAlchemyError as e:
-        # Handle SQLAlchemy errors (e.g., database connection issues)
         db.session.rollback()
         return jsonify({'message': f'Failed to fetch songs for playlist: {str(e)}'}), 500
 
     except Exception as e:
-        # Handle generic exceptions
         return jsonify({'message': f'Error fetching songs for playlist: {str(e)}'}), 500
 
 

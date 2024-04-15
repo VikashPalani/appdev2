@@ -39,8 +39,8 @@ export default {
   background-color: black;
   color: white;
   font-family: Arial, sans-serif;
-  min-height: 100vh; /* Use min-height instead of height */
-  padding: 20px; /* Add padding */
+  min-height: 100vh;
+  padding: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -53,7 +53,7 @@ export default {
 }
 
 .logo {
-  width: 250px; /* Increase the logo size */
+  width: 250px;
 }
 
 .login-button {
@@ -63,13 +63,13 @@ export default {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 20px; /* Add margin between paragraph and button */
+  margin-top: 20px;
   width: 100px;
 }
 
 .content {
   display: flex;
-  justify-content: center; /* Center align content */
+  justify-content: center;
   align-items: center;
   margin-left: 50px;
 }
@@ -77,7 +77,7 @@ export default {
 .left-section {
   flex: 1;
   padding-right: 20px;
-  text-align: justify; /* Justify align text */
+  text-align: justify;
 }
 
 .heading {
@@ -107,11 +107,11 @@ export default {
 }
 
 .footer {
-  background-color: #000000; /* Dummy footer background color */
+  background-color: #000000;
   color: white;
   text-align: center;
-  padding: 20px 0; /* Add padding */
-  position: fixed; /* Fixed position for footer */
+  padding: 20px 0; 
+  position: fixed; 
   bottom: 0;
   width: 100%;
 }
